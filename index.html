@@ -1,0 +1,1837 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>আম্মার ওষুধ ট্র্যাকার & স্টক ম্যানেজার Cloud Pro v9</title>
+    <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --primary-color: #2a7fff;
+            --primary-hover: #1a66e5;
+            --bg-color: #f4f7fc;
+            --card-bg: #ffffff;
+            --text-main: #2c3e50;
+            --text-muted: #7f8c8d;
+            --danger-color: #e74c3c;
+            --warning-color: #f39c12;
+            --success-color: #2ecc71;
+            --border-radius: 16px;
+            --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.01);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Hind Siliguri', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 100%;
+            margin: 0 auto;
+            padding: 0 10px;
+        }
+
+        /* Header Area */
+        header {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            padding: 20px 25px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        header h1 {
+            font-size: 1.65rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .sync-badge {
+            font-size: 0.78rem;
+            background: rgba(255, 255, 255, 0.18);
+            padding: 3px 10px;
+            border-radius: 20px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-weight: 600;
+        }
+
+        .sync-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #f39c12;
+        }
+        .sync-dot.online { background: #2ecc71; }
+        .sync-dot.offline { background: #e74c3c; }
+
+        .time-status-bar {
+            font-size: 0.88rem;
+            opacity: 0.92;
+            margin-top: 4px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .period-pill {
+            background: rgba(255, 255, 255, 0.22);
+            padding: 2px 10px;
+            border-radius: 12px;
+            font-weight: 600;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .btn-header {
+            background: rgba(255, 255, 255, 0.18);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            padding: 8px 13px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 0.86rem;
+            font-weight: 600;
+            transition: all 0.25s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-header:hover {
+            background: white;
+            color: var(--primary-color);
+        }
+
+        .btn-header.active-tab {
+            background: #f39c12;
+            border-color: #e67e22;
+            color: white;
+        }
+
+        .btn-shopping {
+            background: #2ecc71;
+            border-color: #27ae60;
+        }
+
+        .btn-shopping:hover {
+            background: #27ae60;
+            color: white;
+        }
+
+        /* Main Grid Layout */
+        .main-grid {
+            display: grid;
+            grid-template-columns: 360px 1fr;
+            gap: 20px;
+            align-items: start;
+        }
+
+        @media (max-width: 900px) {
+            .main-grid { grid-template-columns: 1fr; }
+        }
+
+        @media (min-width: 901px) {
+            .sidebar {
+                position: sticky;
+                top: 20px;
+                max-height: calc(100vh - 40px);
+                overflow-y: auto;
+                padding-right: 4px;
+            }
+        }
+
+        .sidebar::-webkit-scrollbar { width: 5px; }
+        .sidebar::-webkit-scrollbar-thumb { background: #cbd5e0; border-radius: 10px; }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            padding: 20px 22px;
+            box-shadow: var(--shadow);
+            margin-bottom: 20px;
+        }
+
+        .card h2 {
+            font-size: 1.15rem;
+            margin-bottom: 15px;
+            color: #1e3c72;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border-bottom: 2px solid #f0f3f8;
+            padding-bottom: 8px;
+        }
+
+        /* Accordion */
+        .visit-accordion {
+            background: #f8fafc;
+            border-radius: 12px;
+            border: 1px dashed #cbd5e0;
+            margin-bottom: 18px;
+            overflow: hidden;
+        }
+
+        .visit-accordion-header {
+            padding: 10px 14px;
+            background: #edf2f7;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.88rem;
+            font-weight: 700;
+            color: #1e3c72;
+        }
+
+        .visit-accordion-body { padding: 12px; display: none; }
+        .visit-accordion-body.open { display: block; }
+
+        .btn-add-visit {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 4px 10px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .visit-item-list {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            max-height: 140px;
+            overflow-y: auto;
+            margin-top: 8px;
+        }
+
+        .visit-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: white;
+            padding: 6px 10px;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+            font-size: 0.85rem;
+        }
+
+        .btn-del-visit {
+            color: var(--danger-color);
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 0.85rem;
+        }
+
+        /* Form Styles */
+        .form-group { margin-bottom: 14px; }
+        .form-group label {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: #4a5568;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 9px 12px;
+            border: 1.5px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 0.92rem;
+            outline: none;
+            transition: all 0.3s;
+        }
+
+        .form-control:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(42, 127, 255, 0.15);
+        }
+
+        .freq-options { display: flex; gap: 15px; margin-bottom: 10px; }
+        .freq-options label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .dose-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            background: #f8fafc;
+            padding: 8px;
+            border-radius: 10px;
+            border: 1px dashed #cbd5e0;
+        }
+
+        .dose-item { text-align: center; }
+        .dose-item span {
+            display: block;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            margin-bottom: 3px;
+        }
+
+        .dose-select {
+            width: 100%;
+            padding: 5px;
+            border-radius: 6px;
+            border: 1px solid #cbd5e0;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        .week-days-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 6px;
+            background: #f8fafc;
+            padding: 8px;
+            border-radius: 10px;
+            border: 1px dashed #cbd5e0;
+        }
+
+        .day-checkbox {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 0.78rem;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .duration-presets {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 4px;
+            margin-bottom: 8px;
+        }
+
+        .preset-btn {
+            padding: 6px 2px;
+            background: #edf2f7;
+            border: 1px solid #cbd5e0;
+            border-radius: 6px;
+            font-size: 0.76rem;
+            font-weight: 600;
+            cursor: pointer;
+            text-align: center;
+        }
+
+        .preset-btn:hover, .preset-btn.active {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+
+        #customDaysBox { display: none; margin-top: 6px; }
+
+        .dose-change-box {
+            background: #fffdf5;
+            border: 1px solid #f6e05e;
+            padding: 10px;
+            border-radius: 10px;
+            margin-top: 8px;
+        }
+
+        .btn-submit {
+            width: 100%;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 10px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: background 0.3s;
+        }
+
+        .btn-submit:hover { background: var(--primary-hover); }
+
+        /* Controls */
+        .controls {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 18px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .search-box {
+            flex: 1;
+            position: relative;
+            min-width: 200px;
+        }
+
+        .search-box i {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+        }
+
+        .search-box input { padding-left: 40px; }
+
+        .filter-btn {
+            background: var(--card-bg);
+            border: 1.5px solid #e2e8f0;
+            padding: 8px 15px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            color: var(--text-muted);
+            font-size: 0.88rem;
+            transition: all 0.25s;
+        }
+
+        .filter-btn.active {
+            background: #fff5f5;
+            color: var(--danger-color);
+            border-color: #feb2b2;
+        }
+
+        .filter-btn.archive-active {
+            background: #ebf4ff;
+            color: var(--primary-color);
+            border-color: #90cdf4;
+        }
+
+        /* Medicine Cards */
+        .medicine-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(310px, 1fr));
+            gap: 16px;
+        }
+
+        .med-card {
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            padding: 18px;
+            box-shadow: var(--shadow);
+            position: relative;
+            border-left: 5px solid var(--primary-color);
+            transition: all 0.25s ease;
+        }
+
+        .med-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 30px -5px rgba(0,0,0,0.08);
+        }
+
+        .med-card.low-stock {
+            border-left-color: var(--danger-color);
+            background: #fffafa;
+        }
+
+        /* Archive Mode Styling: Running = Lit up, Inactive = Greyed out */
+        .med-card.archive-running {
+            border: 2px solid #38b2ac;
+            border-left: 6px solid #38b2ac;
+            background: linear-gradient(to bottom right, #ffffff, #f0fff4);
+            box-shadow: 0 8px 20px rgba(56, 178, 172, 0.15);
+        }
+
+        .med-card.archive-inactive {
+            background: #edf2f7;
+            border-left: 5px solid #a0aec0;
+            opacity: 0.68;
+            filter: grayscale(85%);
+        }
+
+        .med-card.archive-inactive:hover {
+            opacity: 0.88;
+        }
+
+        .status-tag {
+            font-size: 0.72rem;
+            padding: 2px 8px;
+            border-radius: 6px;
+            font-weight: 700;
+            margin-bottom: 6px;
+            display: inline-block;
+        }
+        .tag-running { background: #c6f6d5; color: #22543d; }
+        .tag-stopped { background: #cbd5e0; color: #2d3748; }
+
+        .med-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 8px;
+            gap: 8px;
+        }
+
+        .med-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+
+        .prescription-badge {
+            font-size: 0.82rem;
+            background: #eef2ff;
+            color: #4f46e5;
+            padding: 3px 8px;
+            border-radius: 8px;
+            font-weight: 700;
+            border: 1px solid #c7d2fe;
+            white-space: nowrap;
+        }
+
+        .med-dates {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-bottom: 10px;
+            background: #f8fafc;
+            padding: 6px 10px;
+            border-radius: 6px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .med-stats {
+            margin: 8px 0;
+            background: #f8fafc;
+            padding: 10px 12px;
+            border-radius: 10px;
+        }
+
+        .stat-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.85rem;
+            margin-bottom: 5px;
+        }
+
+        .stat-row:last-child { margin-bottom: 0; }
+        .stat-label { color: var(--text-muted); }
+        .stat-value { font-weight: 700; }
+
+        .consumed-info {
+            font-size: 0.76rem;
+            color: #3182ce;
+            background: #ebf8ff;
+            padding: 4px 8px;
+            border-radius: 6px;
+            margin-bottom: 6px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .days-badge {
+            display: inline-block;
+            width: 100%;
+            text-align: center;
+            padding: 7px;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 0.85rem;
+            margin-top: 6px;
+        }
+
+        .badge-good { background: #e6fffa; color: #234e52; }
+        .badge-warning { background: #fffaf0; color: #7b341e; }
+        .badge-danger { background: #fff5f5; color: #9b2c2c; }
+        .badge-archived { background: #e2e8f0; color: #4a5568; }
+
+        .card-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 10px;
+            padding-top: 8px;
+            border-top: 1px solid #f0f3f8;
+        }
+
+        .btn-archive-toggle {
+            font-size: 0.78rem;
+            padding: 4px 10px;
+            border-radius: 6px;
+            border: 1px solid #cbd5e0;
+            background: #f8fafc;
+            color: #4a5568;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        .btn-archive-toggle:hover {
+            background: #edf2f7;
+            color: #1a202c;
+        }
+
+        .btn-icon {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 0.95rem;
+            color: var(--text-muted);
+            padding: 4px 6px;
+        }
+
+        .btn-icon:hover { color: var(--primary-color); }
+        .btn-icon.delete:hover { color: var(--danger-color); }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            color: var(--text-muted);
+            grid-column: 1 / -1;
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            backdrop-filter: blur(3px);
+        }
+
+        .modal {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 25px;
+            max-width: 650px;
+            width: 90%;
+            max-height: 85vh;
+            overflow-y: auto;
+            box-shadow: var(--shadow);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            border-bottom: 2px solid #f0f3f8;
+            padding-bottom: 10px;
+        }
+
+        .shopping-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        .shopping-table th, .shopping-table td {
+            padding: 10px;
+            border: 1px solid #e2e8f0;
+            text-align: left;
+            font-size: 0.9rem;
+        }
+
+        .shopping-table th { background: #f8fafc; color: #1e3c72; }
+        #importFileInput { display: none; }
+
+        @media print {
+            .main-grid { display: block; }
+            .sidebar, .controls, .card-actions, .header-actions { display: none !important; }
+            body { background: white; padding: 0; }
+            .med-card { box-shadow: none; border: 1px solid #ccc; margin-bottom: 12px; page-break-inside: avoid; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <div>
+            <h1>
+                <i class="fa-solid fa-prescription-bottle-medical"></i> আম্মার ওষুধ ট্র্যাকার Cloud Pro
+                <span class="sync-badge" id="syncStatusBadge">
+                    <span class="sync-dot" id="syncDot"></span>
+                    <span id="syncStatusText">কানেক্ট হচ্ছে...</span>
+                </span>
+            </h1>
+            <div class="time-status-bar">
+                <span id="liveClockText">সময় লোড হচ্ছে...</span>
+                <span class="period-pill" id="currentSlotBadge">পিরিয়ড চেক হচ্ছে...</span>
+            </div>
+        </div>
+        <div class="header-actions">
+            <button class="btn-header" id="archiveHeaderBtn" onclick="toggleArchiveView()">
+                <i class="fa-solid fa-box-archive"></i> আর্কাইভ (সব ওষুধ)
+            </button>
+            <button class="btn-header btn-shopping" onclick="openShoppingModal()">
+                <i class="fa-solid fa-cart-shopping"></i> কেনার তালিকা
+            </button>
+            <button class="btn-header" onclick="exportData()">
+                <i class="fa-solid fa-file-export"></i> ব্যাকআপ
+            </button>
+            <button class="btn-header" onclick="triggerImport()">
+                <i class="fa-solid fa-file-import"></i> রিস্টোর
+            </button>
+            <input type="file" id="importFileInput" accept=".json" onchange="importData(event)">
+        </div>
+    </header>
+
+    <div class="main-grid">
+        <!-- Sidebar Area -->
+        <div class="sidebar">
+            <div class="card card-form">
+                <h2><i class="fa-solid fa-plus-circle"></i> ওষুধ তথ্য ইনপুট / স্টক আপডেট</h2>
+                <form id="medicineForm">
+                    <input type="hidden" id="medId">
+                    <div class="form-group">
+                        <label for="medName">ওষুধের নাম</label>
+                        <input type="text" id="medName" class="form-control" placeholder="যেমন: Deflazit 6mg" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>সেবনের নিয়ম</label>
+                        <div class="freq-options">
+                            <label><input type="radio" name="freqType" value="daily" checked onclick="toggleFreqMode('daily')"> প্রতিদিন</label>
+                            <label><input type="radio" name="freqType" value="weekly" onclick="toggleFreqMode('weekly')"> সপ্তাহে নির্দিষ্ট দিন</label>
+                        </div>
+                    </div>
+
+                    <div class="form-group" id="dailyDoseBox">
+                        <label>দৈনিক সেবনের মাত্রা (সকাল + দুপুর + রাত)</label>
+                        <div class="dose-grid">
+                            <div class="dose-item">
+                                <span>সকাল (১০টা)</span>
+                                <select id="doseMorning" class="dose-select">
+                                    <option value="0">0</option>
+                                    <option value="0.5">1/2</option>
+                                    <option value="1">1</option>
+                                    <option value="2">2</option>
+                                </select>
+                            </div>
+                            <div class="dose-item">
+                                <span>দুপুর (১-৩টা)</span>
+                                <select id="doseNoon" class="dose-select">
+                                    <option value="0">0</option>
+                                    <option value="0.5">1/2</option>
+                                    <option value="1">1</option>
+                                    <option value="2">2</option>
+                                </select>
+                            </div>
+                            <div class="dose-item">
+                                <span>রাত (৭-১১টা)</span>
+                                <select id="doseNight" class="dose-select">
+                                    <option value="0">0</option>
+                                    <option value="0.5">1/2</option>
+                                    <option value="1">1</option>
+                                    <option value="2">2</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div style="margin-top: 8px;">
+                            <label style="font-size: 0.8rem; font-weight:600; cursor:pointer;">
+                                <input type="checkbox" id="hasDoseChange" onchange="toggleDoseChangeBox()"> ১ম মাসের পর কি ডোজ পরিবর্তন হবে?
+                            </label>
+                        </div>
+
+                        <div id="doseChangeBox" class="dose-change-box" style="display:none;">
+                            <label style="font-size:0.78rem; color:#744210; font-weight:700;">২য় মাস থেকে দৈনিক সেবনের মাত্রা:</label>
+                            <div class="dose-grid" style="margin-top:5px; background:white;">
+                                <div class="dose-item">
+                                    <span>সকাল</span>
+                                    <select id="nextDoseMorning" class="dose-select">
+                                        <option value="0">0</option>
+                                        <option value="0.5">1/2</option>
+                                        <option value="1">1</option>
+                                    </select>
+                                </div>
+                                <div class="dose-item">
+                                    <span>দুপুর</span>
+                                    <select id="nextDoseNoon" class="dose-select">
+                                        <option value="0">0</option>
+                                        <option value="0.5">1/2</option>
+                                        <option value="1">1</option>
+                                    </select>
+                                </div>
+                                <div class="dose-item">
+                                    <span>রাত</span>
+                                    <select id="nextDoseNight" class="dose-select">
+                                        <option value="0">0</option>
+                                        <option value="0.5">1/2</option>
+                                        <option value="1">1</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group" id="weeklyDoseBox" style="display: none;">
+                        <label>সপ্তাহে কোন কোন দিন খাবেন?</label>
+                        <div class="week-days-grid">
+                            <label class="day-checkbox"><input type="checkbox" class="week-day-input" value="sat"> শনি</label>
+                            <label class="day-checkbox"><input type="checkbox" class="week-day-input" value="sun"> রবি</label>
+                            <label class="day-checkbox"><input type="checkbox" class="week-day-input" value="mon"> সোম</label>
+                            <label class="day-checkbox"><input type="checkbox" class="week-day-input" value="tue"> মঙ্গল</label>
+                            <label class="day-checkbox"><input type="checkbox" class="week-day-input" value="wed"> বুধ</label>
+                            <label class="day-checkbox"><input type="checkbox" class="week-day-input" value="thu"> বৃহস্পতি</label>
+                            <label class="day-checkbox"><input type="checkbox" class="week-day-input" value="fri"> শুক্র</label>
+                        </div>
+                        <div style="margin-top: 6px;">
+                            <label for="weeklySingleDose">প্রতিবার কয়টি করে ট্যাবলেট?</label>
+                            <input type="number" id="weeklySingleDose" class="form-control" step="0.5" value="1" min="0.5">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="currentStock">এই মুহূর্তে ঘরে কয়টি আছে? (লাইভ স্টক)</label>
+                        <input type="number" id="currentStock" class="form-control" step="0.5" min="0" placeholder="যেমন: 46" required>
+                        <small style="font-size:0.75rem; color:#718096;">* সেভ করার মুহূর্ত থেকে সময় অনুযায়ী অটোমেটিক স্টক কমতে থাকবে</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="startDateSelect">ওষুধ খাওয়া শুরুর তারিখ</label>
+                        <select id="startDateSelect" class="form-control"></select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>কত দিনের জন্য দেওয়া হয়েছে?</label>
+                        <div class="duration-presets">
+                            <button type="button" class="preset-btn" onclick="setPresetDays(30, this)">১ মাস</button>
+                            <button type="button" class="preset-btn" onclick="setPresetDays(60, this)">২ মাস</button>
+                            <button type="button" class="preset-btn" onclick="setPresetDays(90, this)">৩ মাস</button>
+                            <button type="button" class="preset-btn" onclick="setPresetDays('continuous', this)">চলবে</button>
+                            <button type="button" class="preset-btn" onclick="setPresetDays('custom', this)">কাস্টম</button>
+                        </div>
+                        <input type="hidden" id="durationMode" value="30">
+                        <div id="customDaysBox">
+                            <input type="number" id="targetDays" class="form-control" value="30" min="1" placeholder="কত দিন লিখুন (যেমন: 45)">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="note">নোট/অতিরিক্ত পরামর্শ (ঐচ্ছিক)</label>
+                        <input type="text" id="note" class="form-control" placeholder="যেমন: খাবারের পর / খালি পেটে">
+                    </div>
+
+                    <button type="submit" class="btn-submit" id="submitBtn">
+                        <i class="fa-solid fa-floppy-disk"></i> সেভ করুন
+                    </button>
+                    <button type="button" class="btn-submit" id="cancelEditBtn" style="display:none; background:#718096; margin-top:6px;" onclick="resetForm()">
+                        বাতিল করুন
+                    </button>
+                </form>
+
+                <!-- Doctor Visit Manager -->
+                <div class="visit-accordion" style="margin-top: 20px;">
+                    <div class="visit-accordion-header" onclick="toggleVisitAccordion()">
+                        <span><i class="fa-solid fa-user-doctor"></i> ডক্টর ভিজিটের তারিখ সেটিং</span>
+                        <i class="fa-solid fa-chevron-down" id="accordionIcon"></i>
+                    </div>
+                    <div class="visit-accordion-body" id="visitAccordionBody">
+                        <div style="display:flex; justify-content:space-between; align-items:center;">
+                            <span style="font-size:0.8rem; font-weight:600;">ভিজিট তালিকা:</span>
+                            <button class="btn-add-visit" onclick="addNewVisitDate()"><i class="fa-solid fa-plus"></i> নতুন যোগ</button>
+                        </div>
+                        <div class="visit-item-list" id="visitListContainer"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Medicine List Section -->
+        <div>
+            <div class="controls">
+                <div class="search-box">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <input type="text" id="searchInput" class="form-control" placeholder="ওষুধের নাম দিয়ে খুঁজুন...">
+                </div>
+
+                <button class="filter-btn" id="lowStockFilterBtn" onclick="toggleLowStockFilter()">
+                    <i class="fa-solid fa-triangle-exclamation"></i> কম স্টক
+                </button>
+
+                <button class="filter-btn" id="archiveFilterBtn" onclick="toggleArchiveView()">
+                    <i class="fa-solid fa-box-archive"></i> আর্কাইভ ভিউ
+                </button>
+            </div>
+
+            <div id="archiveBanner" style="display:none; background:#ebf8ff; border:1px solid #bee3f8; color:#2b6cb0; padding:10px 15px; border-radius:10px; margin-bottom:15px; font-size:0.88rem; font-weight:600;">
+                <i class="fa-solid fa-circle-info"></i> আর্কাইভ মোড চালু আছে: উজ্জ্বল কার্ডগুলো বর্তমানে চলমান (Running) ওষুধ এবং ধূসর (Grey) কার্ডগুলো পূর্বের বা বন্ধ হওয়া ওষুধ।
+            </div>
+
+            <div class="medicine-list" id="medicineContainer"></div>
+        </div>
+    </div>
+</div>
+
+<!-- Shopping List Modal -->
+<div class="modal-overlay" id="shoppingModal">
+    <div class="modal">
+        <div class="modal-header">
+            <div class="modal-title"><i class="fa-solid fa-cart-shopping"></i> প্রয়োজনীয় ওষুধ কেনার তালিকা</div>
+            <button class="close-modal" onclick="closeShoppingModal()" style="background:none; border:none; font-size:1.2rem; cursor:pointer;"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+
+        <div class="shopping-options">
+            <label style="font-weight:600; font-size:0.9rem;">কোন সময় পর্যন্ত কিনতে চান?</label>
+            <select id="shoppingPeriodSelect" class="form-control" style="margin-top:5px; margin-bottom:15px;" onchange="renderShoppingList()">
+                <option value="currentMonth">চলতি মাসের শেষ পর্যন্ত</option>
+                <option value="next1Month">চলতি মাস + আগামী ১ মাস</option>
+                <option value="next2Months">চলতি মাস + আগামী ২ মাস</option>
+            </select>
+        </div>
+
+        <div id="shoppingListTableContainer"></div>
+
+        <div style="margin-top:20px; text-align:right;">
+            <button class="btn-submit" style="width:auto; padding:8px 18px;" onclick="window.print()">
+                <i class="fa-solid fa-print"></i> প্রিন্ট করুন
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Firebase SDK (Compat v10 for clean single-file deployment) -->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+
+<script>
+    // =========================================================================
+    // ১. এখানে তোমার FIREBASE CONFIG পেস্ট করবে (নিচের নির্দেশনা দেখো)
+    // =========================================================================
+    const firebaseConfig = {
+  apiKey: "AIzaSyAMvsQTk_XaxOd_vTHw9VAmN87XyZnV1jQ",
+  authDomain: "speaking-practice-system-6c1bb.firebaseapp.com",
+  projectId: "speaking-practice-system-6c1bb",
+  storageBucket: "speaking-practice-system-6c1bb.firebasestorage.app",
+  messagingSenderId: "329832143186",
+  appId: "1:329832143186:web:0274f1f5a68ad5045f828b",
+  measurementId: "G-WGFD0VX9P3"
+};
+
+    // Firebase Initialization
+    let db = null;
+    let isFirebaseConfigured = firebaseConfig.apiKey !== "YOUR_API_KEY";
+    const DOC_REF_PATH = "amma_med_tracker/main_data";
+
+    if (isFirebaseConfigured) {
+        try {
+            firebase.initializeApp(firebaseConfig);
+            db = firebase.firestore();
+        } catch (e) {
+            console.error("Firebase init error:", e);
+        }
+    }
+
+    // App State
+    let appData = JSON.parse(localStorage.getItem('amma_med_app_v9')) || {
+        visits: [],
+        medicines: []
+    };
+
+    let filterLowStock = false;
+    let isArchiveView = false;
+
+    const form = document.getElementById('medicineForm');
+    const container = document.getElementById('medicineContainer');
+    const searchInput = document.getElementById('searchInput');
+
+    // Update Sync Status UI
+    function updateSyncUI(status, text) {
+        const dot = document.getElementById('syncDot');
+        const label = document.getElementById('syncStatusText');
+        dot.className = 'sync-dot ' + status;
+        label.textContent = text;
+    }
+
+    // Save to LocalStorage AND Firebase Cloud
+    async function saveAppData() {
+        localStorage.setItem('amma_med_app_v9', JSON.stringify(appData));
+        if (db) {
+            updateSyncUI('', 'সেভ হচ্ছে...');
+            try {
+                await db.doc(DOC_REF_PATH).set({
+                    visits: appData.visits,
+                    medicines: appData.medicines,
+                    updatedAt: new Date().toISOString()
+                });
+                updateSyncUI('online', 'ক্লাউড সিঙ্কড');
+            } catch (err) {
+                console.error("Cloud save error:", err);
+                updateSyncUI('offline', 'অফলাইন সেভ (সিঙ্ক ব্যর্থ)');
+            }
+        } else {
+            updateSyncUI('offline', 'লোকাল মোড (Firebase কনফিগার নেই)');
+        }
+    }
+
+    // Real-time Listener from Firebase
+    function initCloudSync() {
+        if (!db) {
+            updateSyncUI('offline', 'লোকাল মোড');
+            return;
+        }
+        db.doc(DOC_REF_PATH).onSnapshot((doc) => {
+            if (doc.exists) {
+                const cloudData = doc.data();
+                appData.visits = cloudData.visits || [];
+                appData.medicines = cloudData.medicines || [];
+                localStorage.setItem('amma_med_app_v9', JSON.stringify(appData));
+                renderVisits();
+                renderMedicines();
+                updateSyncUI('online', 'ক্লাউড সিঙ্কড');
+            } else {
+                // First time push local data to cloud
+                saveAppData();
+            }
+        }, (error) => {
+            console.error("Snapshot error:", error);
+            updateSyncUI('offline', 'অফলাইন মোড');
+        });
+    }
+
+    // =========================================================================
+    // ২. স্মার্ট টাইম-পিরিয়ড ও অটো স্টক ক্যালকুলেশন ইঞ্জিন
+    // সকাল: ১০:০০ পর্যন্ত | দুপুর: ১:০০ - ৩:০০ | রাত: ৭:০০ - ১১:০০
+    // =========================================================================
+    function getCurrentPeriodStatus() {
+        const now = new Date();
+        const hour = now.getHours();
+        const min = now.getMinutes();
+        const timeVal = hour + min / 60;
+
+        if (timeVal < 10) {
+            return "সকালের পিরিয়ড চলছে (১০:০০ টার পর সকালের ডোজ বাদ যাবে)";
+        } else if (timeVal >= 10 && timeVal < 13) {
+            return "সকালের ডোজ সম্পন্ন • দুপুরের অপেক্ষায়";
+        } else if (timeVal >= 13 && timeVal <= 15) {
+            return "দুপুরের পিরিয়ড চলছে (১:০০ - ৩:০০) • দুপুরের ডোজ আপডেট হচ্ছে";
+        } else if (timeVal > 15 && timeVal < 19) {
+            return "দুপুরের ডোজ সম্পন্ন • রাতের অপেক্ষায়";
+        } else if (timeVal >= 19 && timeVal <= 23) {
+            return "রাতের পিরিয়ড চলছে (৭:০০ - ১১:০০) • রাতের ডোজ আপডেট হচ্ছে";
+        } else {
+            return "আজকের সব ডোজ (সকাল+দুপুর+রাত) সম্পন্ন";
+        }
+    }
+
+    function updateLiveClock() {
+        const now = new Date();
+        const options = { weekday: 'long', day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' };
+        document.getElementById('liveClockText').textContent = now.toLocaleDateString('bn-BD', options);
+        document.getElementById('currentSlotBadge').textContent = getCurrentPeriodStatus();
+    }
+
+    // Helper: Get active dose object for a specific date
+    function getDoseForDate(med, targetDateObj) {
+        const start = new Date(med.startDate + "T00:00:00");
+        const dayDiff = Math.floor((targetDateObj - start) / (1000 * 60 * 60 * 24));
+        if (med.hasDoseChange && dayDiff >= 30) {
+            return med.nextDoses || { m: 0, n: 0, nt: 0 };
+        }
+        return med.doses || { m: 0, n: 0, nt: 0 };
+    }
+
+    /**
+     * Exact Live Stock Calculator:
+     * Calculates how many Morning (10:00), Noon (15:00 / active 13:00-15:00),
+     * and Night (23:00 / active 19:00-23:00) doses have been taken between
+     * `med.lastStockUpdated` and `now`.
+     */
+    function calculateLiveStock(med) {
+        const baseStock = parseFloat(med.currentStock) || 0;
+        if (!med.lastStockUpdated) return { liveStock: baseStock, consumedSinceUpdate: 0 };
+
+        const updatedTime = new Date(med.lastStockUpdated);
+        const now = new Date();
+
+        if (now <= updatedTime) {
+            return { liveStock: baseStock, consumedSinceUpdate: 0 };
+        }
+
+        // Stop counting consumption if course already ended
+        let effectiveEndTime = now;
+        if (!med.isContinuous) {
+            const courseEnd = new Date(addDays(med.startDate, med.targetDays) + "T23:59:59");
+            if (courseEnd < effectiveEndTime) {
+                effectiveEndTime = courseEnd;
+            }
+        }
+
+        if (effectiveEndTime <= updatedTime) {
+            return { liveStock: baseStock, consumedSinceUpdate: 0 };
+        }
+
+        let consumed = 0;
+
+        if (med.freqType === 'daily') {
+            // Iterate day by day from updatedTime's date to effectiveEndTime's date
+            let cursor = new Date(updatedTime.getFullYear(), updatedTime.getMonth(), updatedTime.getDate());
+            const endDay = new Date(effectiveEndTime.getFullYear(), effectiveEndTime.getMonth(), effectiveEndTime.getDate());
+
+            // Checkpoint times on each day:
+            // Morning: 10:00 AM (সকাল ১০টা পর্যন্ত পিরিয়ড, ১০টায় খাওয়া সম্পন্ন ধরা হবে)
+            // Noon: 14:00 (দুপুর ১টা-৩টার মাঝামাঝি বা ১টা শুরু হলেই দুপুরে চেক করলে আপডেটেড পাওয়া যাবে)
+            // Night: 21:00 (রাত ৭টা-১১টার পিরিয়ডে রাতের ডোজ আপডেট পাওয়া যাবে)
+            // Note: তোমার রিকোয়ারমেন্ট অনুযায়ী দুপুরে চেক করলে যেন দুপুরে খাওয়া হয়ে গেছে এমন এক্সাক্ট আপডেট পাও:
+            const SLOT_HOURS = {
+                m: 10,  // সকাল ১০:০০
+                n: 13,  // দুপুর ১:০০ (১টা থেকে ৩টার পিরিয়ডে ঢুকলেই দুপুরের ডোজ বাদ যাবে)
+                nt: 19  // রাত ৭:০০ (৭টা থেকে ১১টার পিরিয়ডে ঢুকলেই রাতের ডোজ বাদ যাবে)
+            };
+
+            while (cursor <= endDay) {
+                const dose = getDoseForDate(med, cursor);
+
+                const mTime = new Date(cursor.getFullYear(), cursor.getMonth(), cursor.getDate(), SLOT_HOURS.m, 0, 0);
+                const nTime = new Date(cursor.getFullYear(), cursor.getMonth(), cursor.getDate(), SLOT_HOURS.n, 0, 0);
+                const ntTime = new Date(cursor.getFullYear(), cursor.getMonth(), cursor.getDate(), SLOT_HOURS.nt, 0, 0);
+
+                if (mTime > updatedTime && mTime <= effectiveEndTime) consumed += (dose.m || 0);
+                if (nTime > updatedTime && nTime <= effectiveEndTime) consumed += (dose.n || 0);
+                if (ntTime > updatedTime && ntTime <= effectiveEndTime) consumed += (dose.nt || 0);
+
+                cursor.setDate(cursor.getDate() + 1);
+            }
+        } else {
+            // Weekly mode: check matching weekdays at 10:00 AM
+            const dayMap = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
+            let cursor = new Date(updatedTime.getFullYear(), updatedTime.getMonth(), updatedTime.getDate());
+            const endDay = new Date(effectiveEndTime.getFullYear(), effectiveEndTime.getMonth(), effectiveEndTime.getDate());
+
+            while (cursor <= endDay) {
+                const dayCode = dayMap[cursor.getDay()];
+                if (med.selectedWeekDays && med.selectedWeekDays.includes(dayCode)) {
+                    const takeTime = new Date(cursor.getFullYear(), cursor.getMonth(), cursor.getDate(), 10, 0, 0);
+                    if (takeTime > updatedTime && takeTime <= effectiveEndTime) {
+                        consumed += (med.weeklySingleDose || 1);
+                    }
+                }
+                cursor.setDate(cursor.getDate() + 1);
+            }
+        }
+
+        const liveStock = Math.max(0, +(baseStock - consumed).toFixed(2));
+        return { liveStock, consumedSinceUpdate: +consumed.toFixed(2) };
+    }
+
+    // Check if a medicine is currently active/valid or archived/expired
+    function isMedicineRunning(med) {
+        if (med.isArchived) return false;
+        if (med.isContinuous) return true;
+        const todayStr = new Date().toISOString().split('T')[0];
+        const endDateStr = addDays(med.startDate, med.targetDays);
+        return endDateStr >= todayStr;
+    }
+
+    // =========================================================================
+    // ৩. UI & FORM HANDLERS
+    // =========================================================================
+    function toBengaliNumeral(str) {
+        if (str === null || str === undefined) return '';
+        const bnNums = ['০', '১', '২', '৩', '৪', '৫', '৬', '৭', '৮', '৯'];
+        return str.toString().replace(/[0-9]/g, d => bnNums[d]);
+    }
+
+    function toggleVisitAccordion() {
+        const body = document.getElementById('visitAccordionBody');
+        const icon = document.getElementById('accordionIcon');
+        body.classList.toggle('open');
+        icon.className = body.classList.contains('open') ? 'fa-solid fa-chevron-up' : 'fa-solid fa-chevron-down';
+    }
+
+    function toggleFreqMode(mode) {
+        document.getElementById('dailyDoseBox').style.display = mode === 'daily' ? 'block' : 'none';
+        document.getElementById('weeklyDoseBox').style.display = mode === 'weekly' ? 'block' : 'none';
+    }
+
+    function toggleDoseChangeBox() {
+        const chk = document.getElementById('hasDoseChange').checked;
+        document.getElementById('doseChangeBox').style.display = chk ? 'block' : 'none';
+    }
+
+    function setPresetDays(type, btn) {
+        document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active'));
+        if (btn) btn.classList.add('active');
+
+        const customDaysBox = document.getElementById('customDaysBox');
+        const durationMode = document.getElementById('durationMode');
+        const targetDaysInput = document.getElementById('targetDays');
+
+        if (type === 'custom') {
+            durationMode.value = "custom";
+            customDaysBox.style.display = "block";
+            targetDaysInput.required = true;
+        } else {
+            customDaysBox.style.display = "none";
+            targetDaysInput.required = false;
+            if (type === 'continuous') {
+                durationMode.value = "continuous";
+            } else {
+                durationMode.value = type;
+                targetDaysInput.value = type;
+            }
+        }
+    }
+
+    function formatDoseVal(val) {
+        return val == 0.5 ? '1/2' : val;
+    }
+
+    function renderVisits() {
+        const visitContainer = document.getElementById('visitListContainer');
+        const selectBox = document.getElementById('startDateSelect');
+        
+        visitContainer.innerHTML = '';
+        selectBox.innerHTML = '';
+
+        appData.visits.sort((a, b) => new Date(a.date) - new Date(b.date));
+
+        selectBox.innerHTML = '<option value="">আজকের তারিখ (স্বয়ংক্রিয়)</option>';
+        if (appData.visits.length === 0) {
+            visitContainer.innerHTML = '<div style="font-size:0.78rem; color:var(--text-muted); text-align:center;">কোনো ভিজিট তারিখ সেভ করা নেই।</div>';
+        } else {
+            appData.visits.forEach(v => {
+                visitContainer.insertAdjacentHTML('beforeend', `
+                    <div class="visit-item">
+                        <div>
+                            <span style="font-weight:600;">${escapeHtml(v.name)}</span> - 
+                            <span style="color:var(--text-muted);">${formatDate(v.date)}</span>
+                        </div>
+                        <button class="btn-del-visit" onclick="deleteVisitDate(${v.id})"><i class="fa-solid fa-trash"></i></button>
+                    </div>
+                `);
+                selectBox.insertAdjacentHTML('beforeend', `<option value="${v.date}">${escapeHtml(v.name)} (${formatDate(v.date)})</option>`);
+            });
+        }
+    }
+
+    function addNewVisitDate() {
+        const name = prompt("ভিজিটের নাম লিখুন (যেমন: ১ম ভিজিট / ডা: করিম):", `${toBengaliNumeral(appData.visits.length + 1)}ম ভিজিট`);
+        if (!name) return;
+        const date = prompt("ভিজিটের তারিখ লিখুন (YYYY-MM-DD):", new Date().toISOString().split('T')[0]);
+        if (!date) return;
+
+        appData.visits.push({ id: Date.now(), name, date });
+        saveAppData();
+        renderVisits();
+    }
+
+    function deleteVisitDate(id) {
+        if (confirm('এই ভিজিটের তারিখটি মুছে ফেলতে চান?')) {
+            appData.visits = appData.visits.filter(v => v.id !== id);
+            saveAppData();
+            renderVisits();
+        }
+    }
+
+    form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const id = document.getElementById('medId').value;
+        const name = document.getElementById('medName').value.trim();
+        const freqType = document.querySelector('input[name="freqType"]:checked').value;
+
+        let dailyQty = 0;
+        let doses = { m: 0, n: 0, nt: 0 };
+        let nextDoses = { m: 0, n: 0, nt: 0 };
+        let hasDoseChange = false;
+        let selectedWeekDays = [];
+        let weeklySingleDose = 1;
+
+        if (freqType === 'daily') {
+            const m = parseFloat(document.getElementById('doseMorning').value);
+            const n = parseFloat(document.getElementById('doseNoon').value);
+            const nt = parseFloat(document.getElementById('doseNight').value);
+            doses = { m, n, nt };
+            dailyQty = m + n + nt;
+
+            hasDoseChange = document.getElementById('hasDoseChange').checked;
+            if (hasDoseChange) {
+                nextDoses = {
+                    m: parseFloat(document.getElementById('nextDoseMorning').value),
+                    n: parseFloat(document.getElementById('nextDoseNoon').value),
+                    nt: parseFloat(document.getElementById('nextDoseNight').value)
+                };
+            }
+        } else {
+            document.querySelectorAll('.week-day-input:checked').forEach(cb => selectedWeekDays.push(cb.value));
+            weeklySingleDose = parseFloat(document.getElementById('weeklySingleDose').value) || 1;
+            dailyQty = (selectedWeekDays.length * weeklySingleDose) / 7;
+        }
+
+        if (dailyQty <= 0) {
+            alert('অনুগ্রহ করে সেবনের মাত্রা নির্বাচন করুন।');
+            return;
+        }
+
+        const currentStock = parseFloat(document.getElementById('currentStock').value);
+        let startDate = document.getElementById('startDateSelect').value;
+        if (!startDate) startDate = new Date().toISOString().split('T')[0];
+
+        const durationMode = document.getElementById('durationMode').value;
+        let targetDays = 30;
+        let isContinuous = false;
+
+        if (durationMode === 'continuous') {
+            isContinuous = true;
+            targetDays = 0;
+        } else if (durationMode === 'custom') {
+            targetDays = parseInt(document.getElementById('targetDays').value);
+        } else {
+            targetDays = parseInt(durationMode);
+        }
+
+        const note = document.getElementById('note').value.trim();
+
+        const medObj = {
+            id: id ? Number(id) : Date.now(),
+            name,
+            freqType,
+            doses,
+            hasDoseChange,
+            nextDoses,
+            selectedWeekDays,
+            weeklySingleDose,
+            dailyQty,
+            currentStock,
+            lastStockUpdated: new Date().toISOString(), // Exact timestamp of stock entry
+            startDate,
+            isContinuous,
+            targetDays,
+            note,
+            isArchived: false
+        };
+
+        if (id) {
+            const index = appData.medicines.findIndex(item => item.id == id);
+            if (index !== -1) {
+                medObj.isArchived = appData.medicines[index].isArchived || false;
+                appData.medicines[index] = medObj;
+            }
+        } else {
+            appData.medicines.push(medObj);
+        }
+
+        saveAppData();
+        renderMedicines();
+        resetForm();
+    });
+
+    function resetForm() {
+        form.reset();
+        document.getElementById('medId').value = '';
+        document.getElementById('customDaysBox').style.display = "none";
+        document.getElementById('doseChangeBox').style.display = "none";
+        document.getElementById('durationMode').value = "30";
+        toggleFreqMode('daily');
+        document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active'));
+        document.getElementById('submitBtn').innerHTML = '<i class="fa-solid fa-floppy-disk"></i> সেভ করুন';
+        document.getElementById('cancelEditBtn').style.display = 'none';
+    }
+
+    function formatDate(dateStr) {
+        if (!dateStr) return 'N/A';
+        const d = new Date(dateStr);
+        const months = ['জানু', 'ফেব্রু', 'মার্চ', 'এপ্রিল', 'মে', 'জুন', 'জুলাই', 'আগস্ট', 'সেপ্টে', 'অক্টো', 'নভে', 'ডিসেম্বর'];
+        return `${toBengaliNumeral(d.getDate())} ${months[d.getMonth()]}, ${toBengaliNumeral(d.getFullYear())}`;
+    }
+
+    function addDays(dateStr, days) {
+        const result = new Date(dateStr);
+        result.setDate(result.getDate() + parseInt(days));
+        return result.toISOString().split('T')[0];
+    }
+
+    function getRequiredForPeriod(med, fromDate, totalDays) {
+        let total = 0;
+        const start = new Date(med.startDate);
+        const current = new Date(fromDate);
+
+        for (let i = 0; i < totalDays; i++) {
+            const dayDiff = Math.floor((current - start) / (1000 * 60 * 60 * 24));
+            if (med.freqType === 'daily') {
+                if (med.hasDoseChange && dayDiff >= 30) {
+                    const d2 = med.nextDoses || { m: 0, n: 0, nt: 0 };
+                    total += (d2.m + d2.n + d2.nt);
+                } else {
+                    const d1 = med.doses || { m: 0, n: 0, nt: 0 };
+                    total += (d1.m + d1.n + d1.nt);
+                }
+            } else {
+                total += med.dailyQty;
+            }
+            current.setDate(current.getDate() + 1);
+        }
+        return total;
+    }
+
+    function toggleArchiveView() {
+        isArchiveView = !isArchiveView;
+        document.getElementById('archiveFilterBtn').classList.toggle('archive-active', isArchiveView);
+        document.getElementById('archiveHeaderBtn').classList.toggle('active-tab', isArchiveView);
+        document.getElementById('archiveBanner').style.display = isArchiveView ? 'block' : 'none';
+        renderMedicines();
+    }
+
+    function toggleMedicineArchiveState(id) {
+        const med = appData.medicines.find(m => m.id === id);
+        if (!med) return;
+        med.isArchived = !med.isArchived;
+        saveAppData();
+        renderMedicines();
+    }
+
+    function renderMedicines() {
+        const query = searchInput.value.toLowerCase();
+        container.innerHTML = '';
+
+        let filtered = appData.medicines.filter(m => m.name.toLowerCase().includes(query));
+
+        // If NOT in archive view, show only currently running medicines
+        if (!isArchiveView) {
+            filtered = filtered.filter(m => isMedicineRunning(m));
+        } else {
+            // In Archive view, sort running medicines first, then stopped/inactive ones
+            filtered.sort((a, b) => (isMedicineRunning(b) ? 1 : 0) - (isMedicineRunning(a) ? 1 : 0));
+        }
+
+        if (filterLowStock) {
+            filtered = filtered.filter(m => {
+                const { liveStock } = calculateLiveStock(m);
+                return isMedicineRunning(m) && (liveStock / (m.dailyQty || 1)) <= 7;
+            });
+        }
+
+        if (filtered.length === 0) {
+            container.innerHTML = `
+                <div class="empty-state">
+                    <i class="fa-solid fa-pills" style="font-size:2.5rem; margin-bottom:10px; color:#cbd5e0;"></i>
+                    <p>${isArchiveView ? 'আর্কাইভে কোনো ওষুধ পাওয়া যায়নি।' : 'বর্তমানে কোনো চলমান ওষুধ পাওয়া যায়নি।'}</p>
+                </div>
+            `;
+            return;
+        }
+
+        const todayStr = new Date().toISOString().split('T')[0];
+        const todayDate = new Date(todayStr);
+
+        filtered.forEach(med => {
+            const running = isMedicineRunning(med);
+            const { liveStock, consumedSinceUpdate } = calculateLiveStock(med);
+            const daysLeft = Math.floor(liveStock / (med.dailyQty || 1));
+
+            let dosePattern = '';
+            if (med.freqType === 'weekly') {
+                dosePattern = `সপ্তাহে ${toBengaliNumeral(med.selectedWeekDays.length)} দিন (${formatDoseVal(med.weeklySingleDose)} টি)`;
+            } else {
+                dosePattern = `${formatDoseVal(med.doses.m)}+${formatDoseVal(med.doses.n)}+${formatDoseVal(med.doses.nt)}`;
+                if (med.hasDoseChange) {
+                    dosePattern += ` (২য় মাস: ${formatDoseVal(med.nextDoses.m)}+${formatDoseVal(med.nextDoses.n)}+${formatDoseVal(med.nextDoses.nt)})`;
+                }
+            }
+
+            let doseLabelHtml = med.freqType === 'weekly'
+                ? `<div class="stat-row"><span class="stat-label">সাপ্তাহিক সেবন:</span><span class="stat-value">${toBengaliNumeral(med.selectedWeekDays.length)} দিন (${formatDoseVal(med.weeklySingleDose)} টি)</span></div>`
+                : `<div class="stat-row"><span class="stat-label">দৈনিক সেবন:</span><span class="stat-value">${toBengaliNumeral(med.doses.m + med.doses.n + med.doses.nt)} টি</span></div>`;
+
+            let statRowHtml = '';
+            let endDateText = '';
+
+            if (med.isContinuous) {
+                endDateText = 'চলবে (স্থায়ী)';
+                const monthlyRequired = Math.ceil(getRequiredForPeriod(med, todayStr, 30));
+                const now = new Date();
+                const lastDayOfCurrMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
+                const remainingDaysInMonth = lastDayOfCurrMonth - now.getDate() + 1;
+                const currentMonthRequired = Math.ceil(getRequiredForPeriod(med, todayStr, remainingDaysInMonth));
+                const shortageCurrentMonth = currentMonthRequired - liveStock;
+
+                const monthStatusText = shortageCurrentMonth > 0 ? `${toBengaliNumeral(shortageCurrentMonth.toFixed(1))} টি` : 'প্রয়োজন নেই';
+                const monthStatusColor = shortageCurrentMonth > 0 ? 'var(--danger-color)' : 'var(--success-color)';
+
+                statRowHtml = `
+                    ${doseLabelHtml}
+                    <div class="stat-row">
+                        <span class="stat-label">বর্তমান লাইভ স্টক:</span>
+                        <span class="stat-value" style="color:#1e3c72; font-size:0.95rem;">${toBengaliNumeral(liveStock)} টি</span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="stat-label">১ মাসের (৩০ দিন) প্রয়োজন:</span>
+                        <span class="stat-value">${toBengaliNumeral(monthlyRequired)} টি</span>
+                    </div>
+                    <div class="stat-row" style="color: ${monthStatusColor}">
+                        <span class="stat-label" style="color: inherit; font-weight: 600;">চলতি মাসে (${toBengaliNumeral(remainingDaysInMonth)} দিন) কম পড়বে:</span>
+                        <span class="stat-value">${monthStatusText}</span>
+                    </div>
+                `;
+            } else {
+                const endDateStr = addDays(med.startDate, med.targetDays);
+                endDateText = formatDate(endDateStr);
+                const endDateObj = new Date(endDateStr);
+                const remainingDays = Math.max(0, Math.ceil((endDateObj - todayDate) / (1000 * 60 * 60 * 24)));
+                const requiredForRemainingCourse = Math.ceil(getRequiredForPeriod(med, todayStr, remainingDays));
+
+                if (liveStock >= requiredForRemainingCourse) {
+                    const surplus = liveStock - requiredForRemainingCourse;
+                    statRowHtml = `
+                        ${doseLabelHtml}
+                        <div class="stat-row">
+                            <span class="stat-label">বর্তমান লাইভ স্টক:</span>
+                            <span class="stat-value" style="color:#1e3c72; font-size:0.95rem;">${toBengaliNumeral(liveStock)} টি</span>
+                        </div>
+                        <div class="stat-row">
+                            <span class="stat-label">কোর্স শেষের বাকি:</span>
+                            <span class="stat-value">${toBengaliNumeral(remainingDays)} দিন (${toBengaliNumeral(requiredForRemainingCourse)} টি)</span>
+                        </div>
+                        <div class="stat-row" style="color: var(--success-color)">
+                            <span class="stat-label" style="color: inherit; font-weight: 600;">কোর্স শেষে অতিরিক্ত থাকবে:</span>
+                            <span class="stat-value">${toBengaliNumeral(surplus.toFixed(1))} টি</span>
+                        </div>
+                    `;
+                } else {
+                    const shortage = requiredForRemainingCourse - liveStock;
+                    statRowHtml = `
+                        ${doseLabelHtml}
+                        <div class="stat-row">
+                            <span class="stat-label">বর্তমান লাইভ স্টক:</span>
+                            <span class="stat-value" style="color:#1e3c72; font-size:0.95rem;">${toBengaliNumeral(liveStock)} টি</span>
+                        </div>
+                        <div class="stat-row">
+                            <span class="stat-label">কোর্স শেষের বাকি:</span>
+                            <span class="stat-value">${toBengaliNumeral(remainingDays)} দিন (${toBengaliNumeral(requiredForRemainingCourse)} টি)</span>
+                        </div>
+                        <div class="stat-row" style="color: var(--danger-color)">
+                            <span class="stat-label" style="color: inherit; font-weight: 600;">কোর্স সম্পূর্ণ করতে কম পড়বে:</span>
+                            <span class="stat-value">${toBengaliNumeral(shortage.toFixed(1))} টি</span>
+                        </div>
+                    `;
+                }
+            }
+
+            let badgeClass = 'badge-good';
+            let statusText = `চলবে আর ${toBengaliNumeral(daysLeft)} দিন`;
+
+            if (!running) {
+                badgeClass = 'badge-archived';
+                statusText = med.isArchived ? 'ম্যানুয়ালি বন্ধ করা হয়েছে' : 'কোর্সের মেয়াদ শেষ';
+            } else if (daysLeft <= 3) {
+                badgeClass = 'badge-danger';
+                statusText = `জরুরি! চলবে মাত্র ${toBengaliNumeral(daysLeft)} দিন`;
+            } else if (daysLeft <= 7) {
+                badgeClass = 'badge-warning';
+                statusText = `স্টক কম! চলবে ${toBengaliNumeral(daysLeft)} দিন`;
+            }
+
+            let cardStateClass = '';
+            if (isArchiveView) {
+                cardStateClass = running ? 'archive-running' : 'archive-inactive';
+            } else if (daysLeft <= 7) {
+                cardStateClass = 'low-stock';
+            }
+
+            const archiveStatusBadge = isArchiveView
+                ? `<span class="status-tag ${running ? 'tag-running' : 'tag-stopped'}">${running ? '● চলমান (Active)' : '○ বন্ধ / মেয়াদোত্তীর্ণ'}</span>`
+                : '';
+
+            const autoDeductNote = consumedSinceUpdate > 0
+                ? `<div class="consumed-info"><span><i class="fa-solid fa-clock-rotate-left"></i> অটো বাদ গেছে:</span><strong>${toBengaliNumeral(consumedSinceUpdate)} টি (মূল স্টক: ${toBengaliNumeral(med.currentStock)})</strong></div>`
+                : '';
+
+            const cardHtml = `
+                <div class="med-card ${cardStateClass}">
+                    ${archiveStatusBadge}
+                    <div class="med-header">
+                        <div class="med-title">${escapeHtml(med.name)}</div>
+                        <div class="prescription-badge">${dosePattern}</div>
+                    </div>
+
+                    <div class="med-dates">
+                        <span><i class="fa-regular fa-calendar-check"></i> শুরু: ${formatDate(med.startDate)}</span>
+                        <span><i class="fa-regular fa-calendar"></i> শেষ: ${endDateText}</span>
+                    </div>
+
+                    ${autoDeductNote}
+
+                    <div class="med-stats">
+                        ${statRowHtml}
+                    </div>
+
+                    ${med.note ? `<div style="font-size:0.82rem; color:var(--text-muted); margin-bottom: 6px;"><i class="fa-solid fa-info-circle"></i> ${escapeHtml(med.note)}</div>` : ''}
+
+                    <div class="days-badge ${badgeClass}">
+                        ${statusText}
+                    </div>
+
+                    <div class="card-actions">
+                        <button class="btn-archive-toggle" onclick="toggleMedicineArchiveState(${med.id})">
+                            ${med.isArchived ? '<i class="fa-solid fa-rotate-left"></i> পুনরায় চালু করুন' : '<i class="fa-solid fa-box-archive"></i> আর্কাইভে পাঠান'}
+                        </button>
+                        <div>
+                            <button class="btn-icon" onclick="editMedicine(${med.id})" title="সম্পাদনা / স্টক আপডেট করুন">
+                                <i class="fa-solid fa-pen-to-square"></i>
+                            </button>
+                            <button class="btn-icon delete" onclick="deleteMedicine(${med.id})" title="মুছে ফেলুন">
+                                <i class="fa-solid fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            container.insertAdjacentHTML('beforeend', cardHtml);
+        });
+    }
+
+    function editMedicine(id) {
+        const med = appData.medicines.find(m => m.id === id);
+        if (!med) return;
+
+        // Pre-fill current LIVE stock so user sees exact current count when updating
+        const { liveStock } = calculateLiveStock(med);
+
+        document.getElementById('medId').value = med.id;
+        document.getElementById('medName').value = med.name;
+        
+        if (med.freqType === 'weekly') {
+            document.querySelector('input[name="freqType"][value="weekly"]').checked = true;
+            toggleFreqMode('weekly');
+            document.querySelectorAll('.week-day-input').forEach(cb => {
+                cb.checked = med.selectedWeekDays ? med.selectedWeekDays.includes(cb.value) : false;
+            });
+            document.getElementById('weeklySingleDose').value = med.weeklySingleDose || 1;
+        } else {
+            document.querySelector('input[name="freqType"][value="daily"]').checked = true;
+            toggleFreqMode('daily');
+            document.getElementById('doseMorning').value = med.doses ? med.doses.m : 0;
+            document.getElementById('doseNoon').value = med.doses ? med.doses.n : 0;
+            document.getElementById('doseNight').value = med.doses ? med.doses.nt : 0;
+
+            if (med.hasDoseChange) {
+                document.getElementById('hasDoseChange').checked = true;
+                toggleDoseChangeBox();
+                document.getElementById('nextDoseMorning').value = med.nextDoses ? med.nextDoses.m : 0;
+                document.getElementById('nextDoseNoon').value = med.nextDoses ? med.nextDoses.n : 0;
+                document.getElementById('nextDoseNight').value = med.nextDoses ? med.nextDoses.nt : 0;
+            } else {
+                document.getElementById('hasDoseChange').checked = false;
+                toggleDoseChangeBox();
+            }
+        }
+
+        document.getElementById('currentStock').value = liveStock;
+        document.getElementById('startDateSelect').value = med.startDate;
+
+        const durationModeInput = document.getElementById('durationMode');
+        const customDaysBox = document.getElementById('customDaysBox');
+        const targetDaysInput = document.getElementById('targetDays');
+
+        if (med.isContinuous) {
+            durationModeInput.value = "continuous";
+            customDaysBox.style.display = "none";
+        } else if ([30, 60, 90].includes(med.targetDays)) {
+            durationModeInput.value = med.targetDays;
+            customDaysBox.style.display = "none";
+        } else {
+            durationModeInput.value = "custom";
+            customDaysBox.style.display = "block";
+            targetDaysInput.value = med.targetDays;
+        }
+
+        document.getElementById('note').value = med.note || '';
+        document.getElementById('submitBtn').innerHTML = '<i class="fa-solid fa-pen"></i> আপডেট করুন';
+        document.getElementById('cancelEditBtn').style.display = 'block';
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function deleteMedicine(id) {
+        if (confirm('আপনি কি নিশ্চিত যে এই ওষুধটি স্থায়ীভাবে মুছে ফেলতে চান? (বন্ধ করতে চাইলে আর্কাইভ বাটন ব্যবহার করুন)')) {
+            appData.medicines = appData.medicines.filter(m => m.id !== id);
+            saveAppData();
+            renderMedicines();
+        }
+    }
+
+    function toggleLowStockFilter() {
+        filterLowStock = !filterLowStock;
+        document.getElementById('lowStockFilterBtn').classList.toggle('active', filterLowStock);
+        renderMedicines();
+    }
+
+    /* Shopping List */
+    function openShoppingModal() {
+        document.getElementById('shoppingModal').style.display = 'flex';
+        renderShoppingList();
+    }
+
+    function closeShoppingModal() {
+        document.getElementById('shoppingModal').style.display = 'none';
+    }
+
+    function renderShoppingList() {
+        const period = document.getElementById('shoppingPeriodSelect').value;
+        const container = document.getElementById('shoppingListTableContainer');
+        const today = new Date();
+        const todayStr = today.toISOString().split('T')[0];
+
+        let targetDaysForPeriod = 0;
+        const lastDayOfCurrMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0).getDate();
+        const daysRemainingInCurrMonth = lastDayOfCurrMonth - today.getDate() + 1;
+
+        if (period === 'currentMonth') {
+            targetDaysForPeriod = daysRemainingInCurrMonth;
+        } else if (period === 'next1Month') {
+            const nextMonthDays = new Date(today.getFullYear(), today.getMonth() + 2, 0).getDate();
+            targetDaysForPeriod = daysRemainingInCurrMonth + nextMonthDays;
+        } else if (period === 'next2Months') {
+            const next1MonthDays = new Date(today.getFullYear(), today.getMonth() + 2, 0).getDate();
+            const next2MonthDays = new Date(today.getFullYear(), today.getMonth() + 3, 0).getDate();
+            targetDaysForPeriod = daysRemainingInCurrMonth + next1MonthDays + next2MonthDays;
+        }
+
+        const activeMeds = appData.medicines.filter(m => isMedicineRunning(m));
+
+        let html = `
+            <table class="shopping-table">
+                <thead>
+                    <tr>
+                        <th>ওষুধের নাম</th>
+                        <th>বর্তমান লাইভ স্টক</th>
+                        <th>নির্ধারিত সময়ের সেবন</th>
+                        <th>কিনতে হবে</th>
+                    </tr>
+                </thead>
+                <tbody>
+        `;
+
+        activeMeds.forEach(med => {
+            const { liveStock } = calculateLiveStock(med);
+            let activeDaysInPeriod = targetDaysForPeriod;
+
+            if (!med.isContinuous) {
+                const endDateStr = addDays(med.startDate, med.targetDays);
+                const endDateObj = new Date(endDateStr);
+                const remainingCourseDays = Math.max(0, Math.ceil((endDateObj - today) / (1000 * 60 * 60 * 24)));
+                activeDaysInPeriod = Math.min(targetDaysForPeriod, remainingCourseDays);
+            }
+
+            const neededTotal = Math.ceil(getRequiredForPeriod(med, todayStr, activeDaysInPeriod));
+            const buyQty = Math.max(0, neededTotal - liveStock);
+
+            html += `
+                <tr>
+                    <td><strong>${escapeHtml(med.name)}</strong></td>
+                    <td>${toBengaliNumeral(liveStock)} টি</td>
+                    <td>${toBengaliNumeral(neededTotal)} টি ${activeDaysInPeriod < targetDaysForPeriod ? '(কোর্স অনুযায়ী)' : ''}</td>
+                    <td style="color:${buyQty > 0 ? 'var(--danger-color)' : 'var(--success-color)'}; font-weight:700;">
+                        ${buyQty > 0 ? toBengaliNumeral(Math.ceil(buyQty)) + ' টি' : 'প্রয়োজন নেই'}
+                    </td>
+                </tr>
+            `;
+        });
+
+        html += `</tbody></table>`;
+        container.innerHTML = activeMeds.length === 0
+            ? '<div style="text-align:center; padding:20px; color:var(--text-muted);">কোনো চলমান ওষুধ পাওয়া যায়নি।</div>'
+            : html;
+    }
+
+    // JSON Export / Import
+    function exportData() {
+        const exportDate = new Date().toISOString().split('T')[0];
+        const dataToExport = { exportDate, appData };
+        const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(dataToExport, null, 2));
+        const a = document.createElement('a');
+        a.href = dataStr;
+        a.download = `amma_medicine_backup_${exportDate}.json`;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+    }
+
+    function triggerImport() {
+        document.getElementById('importFileInput').click();
+    }
+
+    function importData(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            try {
+                const imported = JSON.parse(e.target.result);
+                if (imported && imported.appData) {
+                    appData = imported.appData;
+                    // Ensure legacy data without lastStockUpdated gets exportDate timestamp
+                    appData.medicines.forEach(med => {
+                        if (!med.lastStockUpdated && imported.exportDate) {
+                            med.lastStockUpdated = imported.exportDate + "T00:00:00";
+                        }
+                    });
+                    saveAppData();
+                    renderVisits();
+                    renderMedicines();
+                    alert('ব্যাকআপ ফাইল সফলভাবে ইম্পোর্ট ও ক্লাউডে সিঙ্ক হয়েছে!');
+                } else {
+                    alert('সঠিক জেসন ফাইল নির্বাচন করুন।');
+                }
+            } catch (err) {
+                alert('ফাইলটি পড়তে সমস্যা হয়েছে!');
+            }
+        };
+        reader.readAsText(file);
+    }
+
+    searchInput.addEventListener('input', renderMedicines);
+
+    function escapeHtml(text) {
+        if (!text) return '';
+        return text.replace(/[&<"']/g, m => ({ '&': '&amp;', '<': '&lt;', '"': '&quot;', "'": '&#039;' }[m]));
+    }
+
+    // Boot
+    updateLiveClock();
+    setInterval(() => {
+        updateLiveClock();
+        renderMedicines(); // Auto-refresh stock view every minute when time slot crosses
+    }, 60000);
+
+    renderVisits();
+    renderMedicines();
+    initCloudSync();
+</script>
+
+</body>
+</html>
