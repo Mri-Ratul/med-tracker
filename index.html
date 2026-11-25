@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Medicine Tracker</title>
+    <title>Medicine Tracker Pro</title>
     <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -32,29 +32,80 @@
         body {
             background-color: var(--bg-color);
             color: var(--text-main);
-            padding: 14px;
-            line-height: 1.5;
+            padding: 16px;
+            line-height: 1.55;
         }
 
-        /* Slight Zoom-Out on Desktop to fit screen without scrolling */
+        /* Fixed App Shell on Desktop so ONLY the medicine grid scrolls */
         @media (min-width: 901px) {
-            body {
-                zoom: 0.88;
+            html, body {
+                height: 100%;
+                overflow: hidden;
             }
+            body {
+                zoom: 0.94;
+                display: flex;
+                flex-direction: column;
+            }
+            .container {
+                display: flex;
+                flex-direction: column;
+                height: 100%;
+                overflow: hidden;
+            }
+            header {
+                flex-shrink: 0;
+            }
+            .main-grid {
+                flex: 1;
+                min-height: 0;
+                height: 100%;
+            }
+            .sidebar {
+                height: 100%;
+                overflow-y: auto;
+                padding-right: 4px;
+            }
+            .content-pane {
+                display: flex;
+                flex-direction: column;
+                height: 100%;
+                min-height: 0;
+            }
+            .controls, #archiveBanner {
+                flex-shrink: 0;
+            }
+            .medicine-scroll-area {
+                flex: 1;
+                overflow-y: auto;
+                padding-right: 6px;
+                padding-bottom: 16px;
+            }
+        }
+
+        /* Custom sleek scrollbars */
+        .sidebar::-webkit-scrollbar,
+        .medicine-scroll-area::-webkit-scrollbar {
+            width: 6px;
+        }
+        .sidebar::-webkit-scrollbar-thumb,
+        .medicine-scroll-area::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 10px;
         }
 
         .container {
             width: 100%;
             max-width: 100%;
             margin: 0 auto;
-            padding: 0 6px;
+            padding: 0 8px;
         }
 
-        /* Compact Header Area */
+        /* Header */
         header {
             background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
             color: white;
-            padding: 14px 20px;
+            padding: 15px 22px;
             border-radius: var(--border-radius);
             box-shadow: var(--shadow);
             margin-bottom: 16px;
@@ -66,15 +117,42 @@
         }
 
         header h1 {
-            font-size: 1.5rem;
+            font-size: 1.55rem;
             font-weight: 700;
             display: flex;
             align-items: center;
             gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .profile-switcher-box {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 3px 10px;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.35);
+            font-size: 0.84rem;
+        }
+
+        .profile-select {
+            background: transparent;
+            color: white;
+            border: none;
+            font-weight: 700;
+            font-size: 0.85rem;
+            outline: none;
+            cursor: pointer;
+        }
+
+        .profile-select option {
+            color: #1e3c72;
+            background: white;
         }
 
         .sync-badge {
-            font-size: 0.78rem;
+            font-size: 0.8rem;
             background: rgba(255, 255, 255, 0.18);
             padding: 3px 10px;
             border-radius: 20px;
@@ -106,7 +184,7 @@
             padding: 7px 14px;
             border-radius: 10px;
             cursor: pointer;
-            font-size: 0.86rem;
+            font-size: 0.88rem;
             font-weight: 600;
             transition: all 0.25s;
             display: flex;
@@ -125,6 +203,16 @@
             color: white;
         }
 
+        .btn-ai {
+            background: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%);
+            border-color: #a78bfa;
+        }
+
+        .btn-ai:hover {
+            background: #5b21b6;
+            color: white;
+        }
+
         .btn-upload {
             background: #3182ce;
             border-color: #63b3ed;
@@ -140,11 +228,11 @@
             color: white;
         }
 
-        /* Main Grid Layout */
+        /* Main Grid */
         .main-grid {
             display: grid;
-            grid-template-columns: 335px 1fr;
-            gap: 16px;
+            grid-template-columns: 355px 1fr;
+            gap: 18px;
             align-items: start;
         }
 
@@ -157,12 +245,12 @@
             border-radius: var(--border-radius);
             padding: 16px 18px;
             box-shadow: var(--shadow);
-            margin-bottom: 16px;
+            margin-bottom: 14px;
         }
 
         .card h2 {
-            font-size: 1.08rem;
-            margin-bottom: 12px;
+            font-size: 1.1rem;
+            margin-bottom: 10px;
             color: #1e3c72;
             display: flex;
             align-items: center;
@@ -171,12 +259,43 @@
             padding-bottom: 6px;
         }
 
+        /* Compact AI Scanner Quick Banner in Sidebar */
+        .ai-scan-banner {
+            background: linear-gradient(135deg, #f5f3ff 0%, #ede9fe 100%);
+            border: 1.5px dashed #8b5cf6;
+            border-radius: 10px;
+            padding: 7px 10px;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        .btn-ai-scan {
+            width: 100%;
+            background: linear-gradient(135deg, #7c3aed 0%, #5b21b6 100%);
+            color: white;
+            border: none;
+            padding: 7px 10px;
+            border-radius: 7px;
+            font-size: 0.86rem;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 7px;
+            transition: transform 0.15s;
+        }
+
+        .btn-ai-scan:hover {
+            transform: translateY(-1px);
+        }
+
         /* Accordion */
         .visit-accordion {
             background: #f8fafc;
             border-radius: 10px;
             border: 1px dashed #cbd5e0;
-            margin-top: 14px;
+            margin-top: 12px;
             overflow: hidden;
         }
 
@@ -202,7 +321,7 @@
             padding: 3px 9px;
             border-radius: 6px;
             cursor: pointer;
-            font-size: 0.78rem;
+            font-size: 0.8rem;
             font-weight: 600;
         }
 
@@ -210,7 +329,7 @@
             display: flex;
             flex-direction: column;
             gap: 5px;
-            max-height: 120px;
+            max-height: 150px;
             overflow-y: auto;
             margin-top: 6px;
         }
@@ -220,10 +339,10 @@
             justify-content: space-between;
             align-items: center;
             background: white;
-            padding: 5px 8px;
+            padding: 5px 9px;
             border-radius: 6px;
             border: 1px solid #e2e8f0;
-            font-size: 0.82rem;
+            font-size: 0.84rem;
         }
 
         .btn-del-visit {
@@ -231,16 +350,16 @@
             background: none;
             border: none;
             cursor: pointer;
-            font-size: 0.82rem;
+            font-size: 0.84rem;
         }
 
         /* Form Styles */
-        .form-group { margin-bottom: 11px; }
+        .form-group { margin-bottom: 10px; }
         .form-group label {
             display: block;
-            font-size: 0.83rem;
+            font-size: 0.84rem;
             font-weight: 600;
-            margin-bottom: 4px;
+            margin-bottom: 3px;
             color: #4a5568;
         }
 
@@ -249,7 +368,7 @@
             padding: 7px 10px;
             border: 1.5px solid #e2e8f0;
             border-radius: 9px;
-            font-size: 0.88rem;
+            font-size: 0.89rem;
             outline: none;
             transition: all 0.25s;
         }
@@ -259,14 +378,24 @@
             box-shadow: 0 0 0 3px rgba(42, 127, 255, 0.15);
         }
 
-        .freq-options { display: flex; gap: 14px; margin-bottom: 8px; }
+        .freq-options {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 5px;
+            margin-bottom: 6px;
+        }
         .freq-options label {
-            font-size: 0.83rem;
+            font-size: 0.8rem;
             font-weight: 600;
             cursor: pointer;
             display: flex;
             align-items: center;
             gap: 5px;
+            background: #f8fafc;
+            padding: 5px 8px;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+            margin-bottom: 0;
         }
 
         .dose-grid {
@@ -302,7 +431,7 @@
             grid-template-columns: repeat(4, 1fr);
             gap: 5px;
             background: #f8fafc;
-            padding: 7px;
+            padding: 8px;
             border-radius: 9px;
             border: 1px dashed #cbd5e0;
         }
@@ -311,20 +440,95 @@
             display: flex;
             align-items: center;
             gap: 4px;
-            font-size: 0.76rem;
+            font-size: 0.78rem;
             font-weight: 600;
             cursor: pointer;
+        }
+
+        .info-highlight-box {
+            background: #f0f9ff;
+            border: 1px dashed #7dd3fc;
+            padding: 9px 11px;
+            border-radius: 9px;
+            font-size: 0.82rem;
+            color: #0369a1;
+            margin-bottom: 8px;
+        }
+
+        .cycle-box {
+            background: #fffbeb;
+            border: 1.5px dashed #f59e0b;
+            padding: 9px 11px;
+            border-radius: 9px;
+            font-size: 0.81rem;
+            color: #92400e;
+            margin-bottom: 8px;
+        }
+
+        .therapy-box {
+            background: #f0fdfa;
+            border: 1.5px dashed #14b8a6;
+            padding: 9px 11px;
+            border-radius: 9px;
+            font-size: 0.81rem;
+            color: #115e59;
+            margin-bottom: 8px;
+        }
+
+        .vaccine-box {
+            background: #fff1f2;
+            border: 1.5px dashed #f43f5e;
+            padding: 9px 11px;
+            border-radius: 9px;
+            font-size: 0.81rem;
+            color: #9f1239;
+            margin-bottom: 8px;
+        }
+
+        .oxygen-box {
+            background: #eff6ff;
+            border: 1.5px dashed #3b82f6;
+            padding: 9px 11px;
+            border-radius: 9px;
+            font-size: 0.81rem;
+            color: #1e40af;
+            margin-bottom: 8px;
+        }
+
+        .cycle-inputs {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-top: 7px;
+        }
+
+        .sos-type-selector {
+            display: flex;
+            gap: 8px;
+            margin-top: 6px;
+        }
+        .sos-type-selector label {
+            flex: 1;
+            background: white;
+            border: 1px solid #cbd5e0;
+            padding: 6px 8px;
+            border-radius: 7px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
         }
 
         .duration-presets {
             display: grid;
             grid-template-columns: repeat(5, 1fr);
             gap: 4px;
-            margin-bottom: 6px;
+            margin-bottom: 5px;
         }
 
         .preset-btn {
-            padding: 5px 2px;
+            padding: 4px 2px;
             background: #edf2f7;
             border: 1px solid #cbd5e0;
             border-radius: 6px;
@@ -360,7 +564,7 @@
             font-size: 0.92rem;
             font-weight: 600;
             cursor: pointer;
-            margin-top: 6px;
+            margin-top: 5px;
             transition: background 0.3s;
         }
 
@@ -369,7 +573,7 @@
         /* Controls */
         .controls {
             display: flex;
-            gap: 10px;
+            gap: 8px;
             margin-bottom: 14px;
             flex-wrap: wrap;
             align-items: center;
@@ -378,7 +582,7 @@
         .search-box {
             flex: 1;
             position: relative;
-            min-width: 200px;
+            min-width: 180px;
         }
 
         .search-box i {
@@ -394,13 +598,16 @@
         .filter-btn {
             background: var(--card-bg);
             border: 1.5px solid #e2e8f0;
-            padding: 7px 14px;
+            padding: 8px 14px;
             border-radius: 9px;
             cursor: pointer;
             font-weight: 600;
             color: var(--text-muted);
             font-size: 0.85rem;
             transition: all 0.25s;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
         }
 
         .filter-btn.active {
@@ -409,32 +616,145 @@
             border-color: #feb2b2;
         }
 
+        .view-toggle-group {
+            display: inline-flex;
+            background: var(--card-bg);
+            border: 1.5px solid #e2e8f0;
+            border-radius: 9px;
+            overflow: hidden;
+        }
+
+        .view-toggle-btn {
+            background: transparent;
+            border: none;
+            padding: 8px 13px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            transition: all 0.2s;
+        }
+
+        .view-toggle-btn.active {
+            background: #1e3c72;
+            color: white;
+        }
+
         /* Medicine Cards Grid */
         .medicine-list {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 14px;
+            grid-template-columns: repeat(auto-fit, minmax(295px, 1fr));
+            gap: 15px;
+        }
+
+        /* Clean Prescription List View (Serial 1, 2, 3... strictly prescription part only) */
+        .prescription-sheet {
+            background: #ffffff;
+            border-radius: var(--border-radius);
+            padding: 22px 26px;
+            box-shadow: var(--shadow);
+            border-top: 5px solid #1e3c72;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .rx-header-symbol {
+            font-size: 1.45rem;
+            font-weight: 800;
+            color: #1e3c72;
+            border-bottom: 2px solid #e2e8f0;
+            padding-bottom: 8px;
+            margin-bottom: 14px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .rx-item {
+            padding: 11px 8px;
+            border-bottom: 1px dashed #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 12px;
+        }
+
+        .rx-item:last-child {
+            border-bottom: none;
+        }
+
+        .rx-item.rx-inactive {
+            opacity: 0.55;
+            text-decoration: line-through;
+        }
+
+        .rx-main {
+            flex: 1;
+        }
+
+        .rx-name {
+            font-size: 1.06rem;
+            font-weight: 700;
+            color: #1e293b;
+        }
+
+        .rx-instruction {
+            font-size: 0.92rem;
+            color: #334155;
+            margin-top: 2px;
+            padding-left: 18px;
+        }
+
+        .rx-actions {
+            display: flex;
+            gap: 5px;
+            flex-shrink: 0;
         }
 
         .med-card {
             background: var(--card-bg);
             border-radius: var(--border-radius);
-            padding: 14px 16px;
+            padding: 15px 17px;
             box-shadow: var(--shadow);
             position: relative;
             border-left: 5px solid var(--primary-color);
-            transition: all 0.2s ease;
+            transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
+            cursor: grab;
         }
+
+        .med-card:active { cursor: grabbing; }
+        .med-card.dragging { opacity: 0.45; border: 2px dashed var(--primary-color); }
+        .med-card.drag-over { border: 2px solid #8b5cf6; transform: scale(1.01); }
 
         .med-card:hover {
             transform: translateY(-2px);
             box-shadow: 0 10px 24px -5px rgba(0,0,0,0.08);
         }
 
-        .med-card.low-stock {
-            border-left-color: var(--danger-color);
-            background: #fffafa;
+        .med-card.low-stock { border-left-color: var(--danger-color); background: #fffafa; }
+        .med-card.sos-card { border-left-color: #8b5cf6; }
+        .med-card.cycle-card { border-left-color: #d97706; box-shadow: 0 8px 22px -4px rgba(217, 119, 6, 0.14); }
+        .med-card.cycle-rest { background: #fffbeb; border-left-color: #f59e0b; }
+        .med-card.therapy-card { border-left-color: #0d9488; }
+        .med-card.vaccine-card { border-left-color: #e11d48; }
+        .med-card.oxygen-card { border-left-color: #2563eb; background: #f8fbff; }
+
+        /* Clean Drag Header Bar */
+        .card-reorder-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 6px;
+            padding-bottom: 4px;
+            border-bottom: 1px dashed #edf2f7;
+            font-size: 0.74rem;
+            color: #94a3b8;
         }
+
+        .drag-hint { display: inline-flex; align-items: center; gap: 4px; font-weight: 600; }
 
         /* Archive Mode Styling */
         .med-card.archive-running {
@@ -450,20 +770,18 @@
             filter: grayscale(85%);
         }
 
-        .med-card.archive-inactive:hover {
-            opacity: 0.9;
-        }
+        .med-card.archive-inactive:hover { opacity: 0.9; }
 
         .status-tag {
-            font-size: 0.72rem;
+            font-size: 0.73rem;
             padding: 2px 8px;
             border-radius: 6px;
             font-weight: 700;
-            margin-bottom: 5px;
             display: inline-block;
         }
         .tag-running { background: #c6f6d5; color: #22543d; }
         .tag-stopped { background: #cbd5e0; color: #2d3748; }
+        .tag-priority { background: #fef3c7; color: #92400e; }
 
         .med-header {
             display: flex;
@@ -473,11 +791,7 @@
             gap: 8px;
         }
 
-        .med-title {
-            font-size: 1.05rem;
-            font-weight: 700;
-            color: var(--text-main);
-        }
+        .med-title { font-size: 1.08rem; font-weight: 700; color: var(--text-main); }
 
         .prescription-badge {
             font-size: 0.8rem;
@@ -490,12 +804,18 @@
             white-space: nowrap;
         }
 
+        .prescription-badge.sos-badge { background: #f3e8ff; color: #7e22ce; border-color: #d8b4fe; }
+        .prescription-badge.cycle-badge { background: #fef3c7; color: #b45309; border-color: #fde68a; }
+        .prescription-badge.therapy-badge { background: #ccfbf1; color: #0f766e; border-color: #99f6e4; }
+        .prescription-badge.vaccine-badge { background: #ffe4e6; color: #be123c; border-color: #fecdd3; }
+        .prescription-badge.oxygen-badge { background: #dbeafe; color: #1d4ed8; border-color: #bfdbfe; }
+
         .med-dates {
-            font-size: 0.78rem;
+            font-size: 0.8rem;
             color: var(--text-muted);
             margin-bottom: 8px;
             background: #f8fafc;
-            padding: 5px 8px;
+            padding: 5px 9px;
             border-radius: 6px;
             display: flex;
             justify-content: space-between;
@@ -504,28 +824,22 @@
         .med-stats {
             margin: 6px 0;
             background: #f8fafc;
-            padding: 8px 10px;
+            padding: 9px 11px;
             border-radius: 9px;
         }
 
-        .stat-row {
-            display: flex;
-            justify-content: space-between;
-            font-size: 0.83rem;
-            margin-bottom: 4px;
-        }
-
+        .stat-row { display: flex; justify-content: space-between; font-size: 0.85rem; margin-bottom: 4px; }
         .stat-row:last-child { margin-bottom: 0; }
         .stat-label { color: var(--text-muted); }
         .stat-value { font-weight: 700; }
 
         .consumed-info {
-            font-size: 0.74rem;
+            font-size: 0.76rem;
             color: #3182ce;
             background: #ebf8ff;
             padding: 3px 8px;
             border-radius: 6px;
-            margin-bottom: 5px;
+            margin-bottom: 6px;
             display: flex;
             justify-content: space-between;
         }
@@ -537,33 +851,63 @@
             padding: 6px;
             border-radius: 8px;
             font-weight: 700;
-            font-size: 0.82rem;
-            margin-top: 5px;
+            font-size: 0.84rem;
+            margin-top: 6px;
         }
 
         .badge-good { background: #e6fffa; color: #234e52; }
         .badge-warning { background: #fffaf0; color: #7b341e; }
         .badge-danger { background: #fff5f5; color: #9b2c2c; }
         .badge-archived { background: #e2e8f0; color: #4a5568; }
+        .badge-sos { background: #f3e8ff; color: #6b21a8; }
+        .badge-cycle-rest { background: #fef3c7; color: #92400e; }
+        .badge-therapy { background: #ccfbf1; color: #115e59; }
+        .badge-vaccine { background: #ffe4e6; color: #9f1239; }
+        .badge-oxygen { background: #dbeafe; color: #1e40af; }
 
         .card-actions {
             display: flex;
-            justify-content: flex-end;
+            justify-content: space-between;
             align-items: center;
-            gap: 8px;
-            margin-top: 8px;
-            padding-top: 6px;
+            gap: 6px;
+            margin-top: 9px;
+            padding-top: 7px;
             border-top: 1px solid #f0f3f8;
+            flex-wrap: wrap;
         }
+
+        .sos-btn-group { display: flex; gap: 5px; }
+
+        .btn-take-sos {
+            background: #8b5cf6;
+            color: white;
+            border: none;
+            border-radius: 7px;
+            padding: 4px 9px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .btn-take-sos:hover { background: #7c3aed; }
+        .btn-take-sos.secondary { background: #6d28d9; }
+        .btn-take-sos.therapy-btn { background: #0d9488; }
+        .btn-take-sos.therapy-btn:hover { background: #0f766e; }
+        .btn-take-sos.vaccine-btn { background: #e11d48; }
+        .btn-take-sos.vaccine-btn:hover { background: #be123c; }
 
         .btn-icon {
             background: #f8fafc;
             border: 1px solid #e2e8f0;
             border-radius: 6px;
             cursor: pointer;
-            font-size: 0.85rem;
+            font-size: 0.84rem;
             color: var(--text-muted);
-            padding: 4px 9px;
+            padding: 4px 8px;
             transition: all 0.2s;
             display: inline-flex;
             align-items: center;
@@ -588,7 +932,7 @@
         .modal-overlay {
             position: fixed;
             top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(0, 0, 0, 0.5);
+            background: rgba(0, 0, 0, 0.55);
             display: none;
             justify-content: center;
             align-items: center;
@@ -600,9 +944,9 @@
             background: white;
             border-radius: var(--border-radius);
             padding: 22px;
-            max-width: 620px;
-            width: 92%;
-            max-height: 85vh;
+            max-width: 780px;
+            width: 95%;
+            max-height: 90vh;
             overflow-y: auto;
             box-shadow: var(--shadow);
         }
@@ -616,26 +960,118 @@
             padding-bottom: 8px;
         }
 
-        .shopping-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 12px;
-        }
-
-        .shopping-table th, .shopping-table td {
-            padding: 8px 10px;
-            border: 1px solid #e2e8f0;
-            text-align: left;
-            font-size: 0.88rem;
-        }
-
+        .shopping-table { width: 100%; border-collapse: collapse; margin-top: 12px; }
+        .shopping-table th, .shopping-table td { padding: 8px 10px; border: 1px solid #e2e8f0; text-align: left; font-size: 0.88rem; }
         .shopping-table th { background: #f8fafc; color: #1e3c72; }
 
+        /* AI Scanner Modal Specific */
+        .scanner-tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 12px;
+            border-bottom: 2px solid #f1f5f9;
+            padding-bottom: 8px;
+        }
+        .scanner-tab-btn {
+            padding: 6px 14px;
+            border-radius: 8px;
+            border: 1px solid #cbd5e1;
+            background: #f8fafc;
+            font-weight: 700;
+            font-size: 0.85rem;
+            cursor: pointer;
+            color: #475569;
+        }
+        .scanner-tab-btn.active {
+            background: #6d28d9;
+            color: white;
+            border-color: #6d28d9;
+        }
+
+        .api-keys-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 10px 12px;
+            margin-bottom: 12px;
+        }
+        @media (max-width: 650px) {
+            .api-keys-grid { grid-template-columns: 1fr; }
+        }
+
+        .ai-upload-area {
+            border: 2px dashed #8b5cf6;
+            background: #f5f3ff;
+            border-radius: 12px;
+            padding: 18px;
+            text-align: center;
+            cursor: pointer;
+            margin-bottom: 12px;
+            transition: background 0.2s;
+        }
+        .ai-upload-area:hover { background: #ede9fe; }
+
+        .visit-meta-banner {
+            background: #ecfdf5;
+            border: 1px solid #6ee7b7;
+            border-radius: 9px;
+            padding: 9px 12px;
+            margin-bottom: 10px;
+            font-size: 0.84rem;
+            color: #065f46;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .ai-detected-item {
+            background: #f8fafc;
+            border: 1px solid #cbd5e1;
+            border-radius: 10px;
+            padding: 10px 12px;
+            margin-bottom: 8px;
+            display: grid;
+            grid-template-columns: 1.6fr 1.1fr 0.85fr auto;
+            gap: 8px;
+            align-items: center;
+        }
+        @media (max-width: 650px) {
+            .ai-detected-item { grid-template-columns: 1fr; }
+        }
+
+        .badge-action-update {
+            font-size: 0.72rem;
+            background: #dbeafe;
+            color: #1e40af;
+            padding: 2px 6px;
+            border-radius: 5px;
+            font-weight: 700;
+            display: inline-block;
+            margin-top: 3px;
+        }
+        .badge-action-new {
+            font-size: 0.72rem;
+            background: #dcfce7;
+            color: #166534;
+            padding: 2px 6px;
+            border-radius: 5px;
+            font-weight: 700;
+            display: inline-block;
+            margin-top: 3px;
+        }
+
         @media print {
+            html, body { height: auto; overflow: visible; }
             .main-grid { display: block; }
-            .sidebar, .controls, .card-actions, .header-actions { display: none !important; }
+            .sidebar, .controls, .card-actions, .rx-actions, .header-actions, .card-reorder-bar { display: none !important; }
             body { background: white; padding: 0; zoom: 1; }
             .med-card { box-shadow: none; border: 1px solid #ccc; margin-bottom: 12px; page-break-inside: avoid; }
+            .prescription-sheet { box-shadow: none; border: none; padding: 0; }
         }
     </style>
 </head>
@@ -646,6 +1082,19 @@
         <div>
             <h1>
                 <i class="fa-solid fa-prescription-bottle-medical"></i> ওষুধ ট্র্যাকার
+                <!-- Multi-Profile Switcher with Rename & Delete -->
+                <span class="profile-switcher-box" title="প্রোফাইল পরিবর্তন করুন">
+                    <i class="fa-solid fa-user-circle"></i>
+                    <select id="profileSelect" class="profile-select" onchange="switchProfile(this.value)">
+                        <!-- Dynamic Profiles -->
+                    </select>
+                    <button type="button" onclick="renameActiveProfile()" title="প্রোফাইলের নাম পরিবর্তন করুন" style="background:none; border:none; color:white; cursor:pointer; font-size:0.78rem; padding:0 3px; opacity:0.85;">
+                        <i class="fa-solid fa-pen"></i>
+                    </button>
+                    <button type="button" id="deleteProfileBtn" onclick="deleteActiveProfile()" title="বর্তমান প্রোফাইলটি মুছে ফেলুন" style="background:none; border:none; color:#feb2b2; cursor:pointer; font-size:0.8rem; padding:0 3px;">
+                        <i class="fa-solid fa-trash"></i>
+                    </button>
+                </span>
                 <span class="sync-badge" id="syncStatusBadge">
                     <span class="sync-dot" id="syncDot"></span>
                     <span id="syncStatusText">কানেক্ট হচ্ছে...</span>
@@ -653,6 +1102,9 @@
             </h1>
         </div>
         <div class="header-actions">
+            <button class="btn-header btn-ai" onclick="openAiScannerModal()">
+                <i class="fa-solid fa-wand-magic-sparkles"></i> প্রেসক্রিপশন স্ক্যান (AI)
+            </button>
             <button class="btn-header btn-upload" id="cloudSyncBtn" onclick="manualCloudUpload()">
                 <i class="fa-solid fa-cloud-arrow-up"></i> আপডেট / আপলোড
             </button>
@@ -666,25 +1118,124 @@
     </header>
 
     <div class="main-grid">
-        <!-- Sidebar Area -->
+        <!-- Fixed Sidebar Area -->
         <div class="sidebar">
             <div class="card card-form">
-                <h2><i class="fa-solid fa-plus-circle"></i> ওষুধ তথ্য ইনপুট</h2>
+                <h2><i class="fa-solid fa-plus-circle"></i> ওষুধ ও চিকিৎসা ইনপুট</h2>
+
+                <!-- Compact AI Scanner Trigger -->
+                <div class="ai-scan-banner">
+                    <button type="button" class="btn-ai-scan" onclick="openAiScannerModal()">
+                        <i class="fa-solid fa-images"></i> প্রেসক্রিপশন ব্যাচ স্ক্যান / ইমপোর্ট (AI)
+                    </button>
+                </div>
+
                 <form id="medicineForm">
                     <input type="hidden" id="medId">
                     <div class="form-group">
-                        <label for="medName">ওষুধের নাম</label>
-                        <input type="text" id="medName" class="form-control" placeholder="যেমন: Deflazit 6mg" required>
+                        <label for="medName">ওষুধ / থেরাপি / ভ্যাকসিনের নাম</label>
+                        <input type="text" id="medName" class="form-control" placeholder="যেমন: Tobicine 300 / Rehab / Denosis 60" required>
                     </div>
 
                     <div class="form-group">
-                        <label>সেবনের নিয়ম</label>
+                        <label>ধরন ও সেবনের নিয়ম</label>
                         <div class="freq-options">
                             <label><input type="radio" name="freqType" value="daily" checked onclick="toggleFreqMode('daily')"> প্রতিদিন</label>
                             <label><input type="radio" name="freqType" value="weekly" onclick="toggleFreqMode('weekly')"> সপ্তাহে নির্দিষ্ট দিন</label>
+                            <label><input type="radio" name="freqType" value="cycle" onclick="toggleFreqMode('cycle')"> সাইকেল (বিরতিসহ)</label>
+                            <label><input type="radio" name="freqType" value="sos" onclick="toggleFreqMode('sos')"> প্রয়োজন মতো (SOS)</label>
+                            <label><input type="radio" name="freqType" value="therapy" onclick="toggleFreqMode('therapy')"> থেরাপি / সেশন</label>
+                            <label><input type="radio" name="freqType" value="vaccine" onclick="toggleFreqMode('vaccine')"> ভ্যাকসিন / ইনজেকশন</label>
+                            <label style="grid-column: 1 / -1;"><input type="radio" name="freqType" value="oxygen" onclick="toggleFreqMode('oxygen')"> অক্সিজেন সাপোর্ট (দৈনিক ১৮ ঘণ্টা)</label>
                         </div>
                     </div>
 
+                    <!-- Custom Cycle Box -->
+                    <div class="form-group" id="cycleInfoBox" style="display: none;">
+                        <div class="cycle-box">
+                            <i class="fa-solid fa-arrows-spin"></i> <strong>কাস্টম সাইকেল সেটিং:</strong>
+                            একটি নির্দিষ্ট তারিখ থেকে সাইকেল শুরু হয়ে বারবার পুনরাবৃত্তি ঘটবে (যেমন: ২৮ দিন চালু + ২৮ দিন বিরতি)।
+                            <div class="cycle-inputs">
+                                <div>
+                                    <label style="font-size:0.78rem; color:#78350f;">কত দিনের সাইকেল?</label>
+                                    <input type="number" id="cycleDays" class="form-control" value="28" min="1" placeholder="যেমন: 28">
+                                </div>
+                                <div>
+                                    <label style="font-size:0.78rem; color:#78350f;">সাইকেল শুরুর তারিখ</label>
+                                    <input type="date" id="cycleStartDate" class="form-control">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Therapy / Session Box -->
+                    <div class="form-group" id="therapyBox" style="display: none;">
+                        <div class="therapy-box">
+                            <i class="fa-solid fa-heart-pulse"></i> <strong>থেরাপি / সেশন শিডিউল (স্টক প্রযোজ্য নয়):</strong>
+                            <div class="cycle-inputs">
+                                <div>
+                                    <label style="font-size:0.78rem; color:#115e59;">কত দিন পরপর?</label>
+                                    <input type="number" id="therapyIntervalDays" class="form-control" value="7" min="1" placeholder="যেমন: 7 বা 14">
+                                </div>
+                                <div>
+                                    <label style="font-size:0.78rem; color:#115e59;">মোট কয়টি সেশন?</label>
+                                    <input type="number" id="therapyTotalSessions" class="form-control" value="16" min="1" placeholder="যেমন: 16 বা 6">
+                                </div>
+                                <div>
+                                    <label style="font-size:0.78rem; color:#115e59;">সম্পন্ন হয়েছে (টি)</label>
+                                    <input type="number" id="therapyCompletedSessions" class="form-control" value="0" min="0">
+                                </div>
+                                <div>
+                                    <label style="font-size:0.78rem; color:#115e59;">শেষ সেশনের তারিখ</label>
+                                    <input type="date" id="therapyLastDate" class="form-control">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Vaccine / Injection Box -->
+                    <div class="form-group" id="vaccineBox" style="display: none;">
+                        <div class="vaccine-box">
+                            <i class="fa-solid fa-syringe"></i> <strong>ভ্যাকসিন / ইনজেকশন ডোজ শিডিউল (স্টক প্রযোজ্য নয়):</strong>
+                            <div class="cycle-inputs">
+                                <div>
+                                    <label style="font-size:0.78rem; color:#9f1239;">কত দিন পরপর ডোজ?</label>
+                                    <input type="number" id="vaccineIntervalDays" class="form-control" value="180" min="1" placeholder="যেমন: 180 (৬ মাস)">
+                                </div>
+                                <div>
+                                    <label style="font-size:0.78rem; color:#9f1239;">মোট ডোজ সংখ্যা</label>
+                                    <input type="number" id="vaccineTotalDoses" class="form-control" value="6" min="1" placeholder="যেমন: 6">
+                                </div>
+                                <div>
+                                    <label style="font-size:0.78rem; color:#9f1239;">দেওয়া হয়েছে (টি)</label>
+                                    <input type="number" id="vaccineCompletedDoses" class="form-control" value="1" min="0">
+                                </div>
+                                <div>
+                                    <label style="font-size:0.78rem; color:#9f1239;">১ম / শেষ ডোজের তারিখ</label>
+                                    <input type="date" id="vaccineLastDate" class="form-control">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Oxygen Support Box (Daily 18 Hours out of 24) -->
+                    <div class="form-group" id="oxygenBox" style="display: none;">
+                        <div class="oxygen-box">
+                            <i class="fa-solid fa-lungs"></i> <strong>অক্সিজেন থেরাপি (২৪ ঘণ্টার মধ্যে ১৮ ঘণ্টা):</strong>
+                            <div class="cycle-inputs">
+                                <div>
+                                    <label style="font-size:0.78rem; color:#1e40af;">দৈনিক কত ঘণ্টা?</label>
+                                    <input type="number" id="oxygenDailyHours" class="form-control" value="18" min="1" max="24">
+                                </div>
+                                <div>
+                                    <label style="font-size:0.78rem; color:#1e40af;">ফ্লো রেট (L/min)</label>
+                                    <input type="text" id="oxygenFlowRate" class="form-control" value="2-4 L/min" placeholder="যেমন: 2 L/min">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Daily / Cycle Dose Box -->
                     <div class="form-group" id="dailyDoseBox">
                         <label>দৈনিক সেবনের মাত্রা (সকাল + দুপুর + রাত)</label>
                         <div class="dose-grid">
@@ -717,14 +1268,14 @@
                             </div>
                         </div>
 
-                        <div style="margin-top: 6px;">
-                            <label style="font-size: 0.78rem; font-weight:600; cursor:pointer;">
+                        <div id="doseChangeOptionWrapper" style="margin-top: 6px;">
+                            <label style="font-size: 0.79rem; font-weight:600; cursor:pointer;">
                                 <input type="checkbox" id="hasDoseChange" onchange="toggleDoseChangeBox()"> ১ম মাসের পর কি ডোজ পরিবর্তন হবে?
                             </label>
                         </div>
 
                         <div id="doseChangeBox" class="dose-change-box" style="display:none;">
-                            <label style="font-size:0.76rem; color:#744210; font-weight:700;">২য় মাস থেকে দৈনিক সেবনের মাত্রা:</label>
+                            <label style="font-size:0.77rem; color:#744210; font-weight:700;">২য় মাস থেকে দৈনিক সেবনের মাত্রা:</label>
                             <div class="dose-grid" style="margin-top:4px; background:white;">
                                 <div class="dose-item">
                                     <span>সকাল</span>
@@ -754,6 +1305,7 @@
                         </div>
                     </div>
 
+                    <!-- Weekly Dose Box -->
                     <div class="form-group" id="weeklyDoseBox" style="display: none;">
                         <label>সপ্তাহে কোন কোন দিন খাবেন?</label>
                         <div class="week-days-grid">
@@ -765,23 +1317,48 @@
                             <label class="day-checkbox"><input type="checkbox" class="week-day-input" value="thu"> বৃহস্পতি</label>
                             <label class="day-checkbox"><input type="checkbox" class="week-day-input" value="fri"> শুক্র</label>
                         </div>
-                        <div style="margin-top: 5px;">
-                            <label for="weeklySingleDose">প্রতিবার কয়টি করে ট্যাবলেট?</label>
-                            <input type="number" id="weeklySingleDose" class="form-control" step="0.5" value="1" min="0.5">
+                        <div class="cycle-inputs" style="margin-top: 6px;">
+                            <div>
+                                <label for="weeklySingleDose" style="font-size:0.78rem;">প্রতিবার কয়টি?</label>
+                                <input type="number" id="weeklySingleDose" class="form-control" step="0.5" value="1" min="0.5">
+                            </div>
+                            <div>
+                                <label for="weeklyTimeSlot" style="font-size:0.78rem;">কোন বেলা?</label>
+                                <select id="weeklyTimeSlot" class="form-control">
+                                    <option value="সকাল">সকাল</option>
+                                    <option value="দুপুর">দুপুর</option>
+                                    <option value="রাত">রাত</option>
+                                </select>
+                            </div>
                         </div>
                     </div>
 
-                    <div class="form-group">
-                        <label for="currentStock">বর্তমানে ঘরে কয়টি আছে?</label>
-                        <input type="number" id="currentStock" class="form-control" step="0.5" min="0" placeholder="যেমন: 46" required>
+                    <!-- SOS / As Needed Box -->
+                    <div class="form-group" id="sosDoseBox" style="display: none;">
+                        <div class="info-highlight-box">
+                            <i class="fa-solid fa-hand-holding-medical"></i> <strong>প্রয়োজন মতো (SOS) ধরন নির্বাচন করুন:</strong>
+                            <div class="sos-type-selector">
+                                <label>
+                                    <input type="radio" name="sosSubType" value="piece" checked onchange="updateStockLabel()"> ট্যাবলেট / নেবুলাইজার (টি)
+                                </label>
+                                <label>
+                                    <input type="radio" name="sosSubType" value="inhaler" onchange="updateStockLabel()"> ইনহেলার (মোট ইনহেলার সংখ্যা)
+                                </label>
+                            </div>
+                        </div>
                     </div>
 
-                    <div class="form-group">
-                        <label for="startDateSelect">ওষুধ খাওয়া শুরুর তারিখ</label>
+                    <div class="form-group" id="stockGroupBox">
+                        <label for="currentStock" id="currentStockLabel">বর্তমানে ঘরে কয়টি আছে?</label>
+                        <input type="number" id="currentStock" class="form-control" step="0.5" min="0" placeholder="যেমন: 24">
+                    </div>
+
+                    <div class="form-group" id="startDateGroupBox">
+                        <label for="startDateSelect">শুরুর তারিখ / ভিজিট</label>
                         <select id="startDateSelect" class="form-control"></select>
                     </div>
 
-                    <div class="form-group">
+                    <div class="form-group" id="durationGroupBox">
                         <label>কত দিনের জন্য দেওয়া হয়েছে?</label>
                         <div class="duration-presets">
                             <button type="button" class="preset-btn" onclick="setPresetDays(30, this)">১ মাস</button>
@@ -798,7 +1375,7 @@
 
                     <div class="form-group">
                         <label for="note">নোট/অতিরিক্ত পরামর্শ (ঐচ্ছিক)</label>
-                        <input type="text" id="note" class="form-control" placeholder="যেমন: খাবারের পর / খালি পেটে">
+                        <input type="text" id="note" class="form-control" placeholder="যেমন: খাবারের পর / শ্বাসকষ্ট হলে">
                     </div>
 
                     <button type="submit" class="btn-submit" id="submitBtn">
@@ -816,9 +1393,12 @@
                         <i class="fa-solid fa-chevron-down" id="accordionIcon"></i>
                     </div>
                     <div class="visit-accordion-body" id="visitAccordionBody">
-                        <div style="display:flex; justify-content:space-between; align-items:center;">
-                            <span style="font-size:0.78rem; font-weight:600;">ভিজিট তালিকা:</span>
-                            <button class="btn-add-visit" onclick="addNewVisitDate()"><i class="fa-solid fa-plus"></i> নতুন যোগ</button>
+                        <div style="display:flex; justify-content:space-between; align-items:center; gap:5px; flex-wrap:wrap;">
+                            <span style="font-size:0.79rem; font-weight:600;">ভিজিট তালিকা:</span>
+                            <div style="display:flex; gap:5px;">
+                                <button type="button" class="btn-add-visit" onclick="addNewVisitDate()"><i class="fa-solid fa-plus"></i> নতুন যোগ</button>
+                                <button type="button" class="btn-add-visit" style="background:#e53e3e;" onclick="clearProfileData()" title="এই প্রোফাইলের সব ডেটা মুছে ফ্রেশ করুন"><i class="fa-solid fa-broom"></i> রিসেট</button>
+                            </div>
                         </div>
                         <div class="visit-item-list" id="visitListContainer"></div>
                     </div>
@@ -826,12 +1406,22 @@
             </div>
         </div>
 
-        <!-- Medicine List Section -->
-        <div>
+        <!-- Right Content Pane: Fixed Controls + Scrollable Medicine Grid / List -->
+        <div class="content-pane">
             <div class="controls">
                 <div class="search-box">
                     <i class="fa-solid fa-magnifying-glass"></i>
                     <input type="text" id="searchInput" class="form-control" placeholder="ওষুধের নাম দিয়ে খুঁজুন...">
+                </div>
+
+                <!-- Grid View vs Prescription List View Toggle -->
+                <div class="view-toggle-group">
+                    <button type="button" class="view-toggle-btn active" id="btnGridView" onclick="setDisplayMode('grid')">
+                        <i class="fa-solid fa-grip"></i> গ্রিড ভিউ
+                    </button>
+                    <button type="button" class="view-toggle-btn" id="btnListView" onclick="setDisplayMode('list')">
+                        <i class="fa-solid fa-list-ol"></i> প্রেসক্রিপশন ভিউ
+                    </button>
                 </div>
 
                 <button class="filter-btn" id="lowStockFilterBtn" onclick="toggleLowStockFilter()">
@@ -839,11 +1429,13 @@
                 </button>
             </div>
 
-            <div id="archiveBanner" style="display:none; background:#ebf8ff; border:1px solid #bee3f8; color:#2b6cb0; padding:8px 14px; border-radius:9px; margin-bottom:12px; font-size:0.84rem; font-weight:600;">
+            <div id="archiveBanner" style="display:none; background:#ebf8ff; border:1px solid #bee3f8; color:#2b6cb0; padding:8px 14px; border-radius:9px; margin-bottom:13px; font-size:0.85rem; font-weight:600;">
                 <i class="fa-solid fa-circle-info"></i> আর্কাইভ মোড: উজ্জ্বল কার্ডগুলো বর্তমানে চলমান (Running) এবং ধূসর কার্ডগুলো বন্ধ বা মেয়াদোত্তীর্ণ ওষুধ।
             </div>
 
-            <div class="medicine-list" id="medicineContainer"></div>
+            <div class="medicine-scroll-area">
+                <div id="medicineContainer"></div>
+            </div>
         </div>
     </div>
 </div>
@@ -877,6 +1469,109 @@
     </div>
 </div>
 
+<!-- AI Multi-Engine Prescription Scanner & Bulk Import Modal -->
+<div class="modal-overlay" id="aiScannerModal">
+    <div class="modal">
+        <div class="modal-header">
+            <div class="modal-title" style="font-weight:700; font-size:1.12rem; color:#5b21b6;">
+                <i class="fa-solid fa-wand-magic-sparkles"></i> স্মার্ট প্রেসক্রিপশন স্ক্যানার ও ব্যাচ ইমপোর্ট
+            </div>
+            <button onclick="closeAiScannerModal()" style="background:none; border:none; font-size:1.2rem; cursor:pointer;"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+
+        <!-- Tabs: Image Batch Scan vs Bulk JSON Paste -->
+        <div class="scanner-tabs">
+            <button type="button" class="scanner-tab-btn active" id="tabBtnImage" onclick="switchScannerTab('image')">
+                <i class="fa-solid fa-images"></i> ছবি আপলোড (AI)
+            </button>
+            <button type="button" class="scanner-tab-btn" id="tabBtnJson" onclick="switchScannerTab('json')">
+                <i class="fa-solid fa-code"></i> Bulk JSON পেস্ট
+            </button>
+        </div>
+
+        <!-- TAB 1: Multi-Image AI Batch Scanner -->
+        <div id="scannerTabImage">
+            <!-- Dual API Key Setup -->
+            <div class="api-keys-grid">
+                <div>
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                        <label style="font-size:0.79rem; font-weight:700; color:#334155;">
+                            <i class="fa-solid fa-key"></i> Gemini API Key (প্রাইমারি):
+                        </label>
+                        <a href="https://aistudio.google.com/app/apikey" target="_blank" style="font-size:0.74rem; color:#7c3aed; font-weight:600;">Key নিন ↗</a>
+                    </div>
+                    <input type="password" id="geminiApiKeyInput" class="form-control" style="margin-top:4px;" placeholder="AIzaSy...">
+                </div>
+                <div>
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                        <label style="font-size:0.79rem; font-weight:700; color:#334155;">
+                            <i class="fa-solid fa-bolt"></i> Groq API Key (ফাস্ট ব্যাকআপ):
+                        </label>
+                        <a href="https://console.groq.com/keys" target="_blank" style="font-size:0.74rem; color:#ea580c; font-weight:600;">ফ্রি Key নিন ↗</a>
+                    </div>
+                    <input type="password" id="groqApiKeyInput" class="form-control" style="margin-top:4px;" placeholder="gsk_... (ঐচ্ছিক)">
+                </div>
+                <div style="grid-column: 1 / -1; text-align:right;">
+                    <button type="button" onclick="saveApiKeys()" style="background:#5b21b6; color:white; border:none; padding:6px 14px; border-radius:7px; font-size:0.82rem; font-weight:600; cursor:pointer;">
+                        <i class="fa-solid fa-cloud-arrow-up"></i> API Keys ক্লাউডে সেভ করুন
+                    </button>
+                </div>
+            </div>
+
+            <!-- Multi-Image Upload Box -->
+            <div class="ai-upload-area" onclick="document.getElementById('prescriptionImageInput').click()">
+                <i class="fa-solid fa-file-medical" style="font-size:2rem; color:#7c3aed; margin-bottom:5px;"></i>
+                <div style="font-weight:700; color:#4c1d95;">একসাথে ১টি ভিজিটের সব পেজের ছবি সিলেক্ট করুন</div>
+                <small style="color:#6d28d9;">ওষুধ, থেরাপি, ভ্যাকসিন, অক্সিজেন এবং ভিজিট তারিখ অটো শনাক্ত হবে</small>
+                <input type="file" id="prescriptionImageInput" accept="image/*" multiple style="display:none;" onchange="handlePrescriptionBatchUpload(event)">
+            </div>
+        </div>
+
+        <!-- TAB 2: Bulk JSON Paste -->
+        <div id="scannerTabJson" style="display:none;">
+            <div style="margin-bottom:10px;">
+                <label style="font-size:0.83rem; font-weight:700; color:#334155; display:block; margin-bottom:4px;">
+                    JSON ডেটা এখানে পেস্ট করুন:
+                </label>
+                <textarea id="bulkJsonInput" class="form-control" rows="6" placeholder='{"patientName": "Mrs Kazi Ruma Azad", "visitName": "Visit No: 7", "visitDate": "2026-11-01", "medicines": [...]}'></textarea>
+            </div>
+            <button type="button" class="btn-submit" style="background:#5b21b6; margin-bottom:12px;" onclick="parseBulkJsonInput()">
+                <i class="fa-solid fa-file-import"></i> JSON ডেটা প্রিভিউ করুন
+            </button>
+        </div>
+
+        <!-- Silent Progress Indicator -->
+        <div id="aiScanLoading" style="display:none; text-align:center; padding:14px; background:#f5f3ff; border-radius:9px; margin-bottom:12px; color:#5b21b6; font-weight:700; font-size:0.88rem;">
+            <i class="fa-solid fa-spinner fa-spin" style="font-size:1.3rem; margin-bottom:4px;"></i><br>
+            <span id="aiScanStatusText">প্রেসক্রিপশন বিশ্লেষণ হচ্ছে...</span>
+        </div>
+
+        <!-- Detected Visit & Medicines Review Container -->
+        <div id="aiDetectedContainer" style="display:none;">
+            <div class="visit-meta-banner" id="detectedVisitBanner">
+                <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+                    <strong><i class="fa-solid fa-user-check"></i> প্রোফাইল:</strong>
+                    <input type="text" id="metaPatientNameInput" class="form-control" style="width:170px; padding:4px 8px; font-weight:700; font-size:0.84rem;" placeholder="রোগীর নাম">
+                    <span>| <strong>ভিজিট:</strong></span>
+                    <input type="text" id="metaVisitNameInput" class="form-control" style="width:130px; padding:4px 8px; font-weight:600; font-size:0.83rem;" placeholder="Visit No: 7">
+                    <input type="date" id="metaVisitDateInput" class="form-control" style="width:140px; padding:4px 8px; font-size:0.83rem;">
+                </div>
+                <label style="font-size:0.8rem; font-weight:700; cursor:pointer; display:flex; align-items:center; gap:5px; margin-top:4px;">
+                    <input type="checkbox" id="autoArchiveMissingChk" checked> সর্বশেষ ভিজিটে বাদ পড়া পুরনো ওষুধ অটো আর্কাইভ করো
+                </label>
+            </div>
+
+            <div style="font-size:0.84rem; font-weight:700; color:#1e3c72; margin-bottom:8px;">
+                শনাক্তকৃত তালিকা (থেরাপি/ভ্যাকসিন/অক্সিজেনে স্টক লাগে না, শুধু ট্যাবলেটে ঘরে কয়টি আছে লিখুন):
+            </div>
+            <div id="aiDetectedList"></div>
+            <button type="button" class="btn-submit" style="background:#16a34a;" onclick="confirmAndReconcileMedicines()">
+                <i class="fa-solid fa-check-double"></i> প্রোফাইল, ভিজিট ও সব আইটেম সেভ করুন
+            </button>
+        </div>
+    </div>
+</div>
+
 <!-- Firebase SDK -->
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
@@ -902,17 +1597,132 @@
         console.error("Firebase init error:", e);
     }
 
-    let appData = JSON.parse(localStorage.getItem('amma_med_app_v9')) || {
-        visits: [],
-        medicines: []
-    };
+    // Multi-Profile Data Store
+    let storeData = JSON.parse(localStorage.getItem('amma_med_store_v10')) || null;
+
+    if (!storeData) {
+        const legacyV9 = JSON.parse(localStorage.getItem('amma_med_app_v9'));
+        const defaultName = (legacyV9 && legacyV9.patientName) ? legacyV9.patientName : 'আম্মু';
+        storeData = {
+            activeProfileId: 'default_profile',
+            profiles: {
+                'default_profile': {
+                    id: 'default_profile',
+                    name: defaultName,
+                    visits: (legacyV9 && legacyV9.visits) ? legacyV9.visits : [],
+                    medicines: (legacyV9 && legacyV9.medicines) ? legacyV9.medicines : []
+                }
+            },
+            geminiApiKey: (legacyV9 && legacyV9.geminiApiKey) ? legacyV9.geminiApiKey : '',
+            groqApiKey: (legacyV9 && legacyV9.groqApiKey) ? legacyV9.groqApiKey : '',
+            updatedAt: null
+        };
+    }
+
+    function getActiveProfile() {
+        if (!storeData.profiles[storeData.activeProfileId]) {
+            const firstKey = Object.keys(storeData.profiles)[0] || 'default_profile';
+            if (!storeData.profiles[firstKey]) {
+                storeData.profiles[firstKey] = { id: firstKey, name: 'আম্মু', visits: [], medicines: [] };
+            }
+            storeData.activeProfileId = firstKey;
+        }
+        return storeData.profiles[storeData.activeProfileId];
+    }
+
+    function normalizeProfileKey(name) {
+        return (name || 'default').toLowerCase().replace(/[^a-z0-9\u0980-\u09FF]/g, '') || 'default_profile';
+    }
+
+    function renderProfileSelector() {
+        const select = document.getElementById('profileSelect');
+        if (!select) return;
+        select.innerHTML = '';
+
+        Object.values(storeData.profiles).forEach(prof => {
+            const opt = document.createElement('option');
+            opt.value = prof.id;
+            opt.textContent = prof.name;
+            if (prof.id === storeData.activeProfileId) opt.selected = true;
+            select.appendChild(opt);
+        });
+    }
+
+    function switchProfile(profileId) {
+        if (!storeData.profiles[profileId]) return;
+        storeData.activeProfileId = profileId;
+        localStorage.setItem('amma_med_store_v10', JSON.stringify(storeData));
+        resetForm();
+        renderProfileSelector();
+        renderVisits();
+        renderMedicines();
+    }
+
+    function renameActiveProfile() {
+        const prof = getActiveProfile();
+        const newName = prompt("প্রোফাইলের নতুন নাম লিখুন:", prof.name);
+        if (!newName || !newName.trim()) return;
+        prof.name = newName.trim();
+        saveAppData(false);
+        renderProfileSelector();
+    }
+
+    function deleteActiveProfile() {
+        const keys = Object.keys(storeData.profiles);
+        if (keys.length <= 1) {
+            alert("কমপক্ষে একটি প্রোফাইল থাকতে হবে! চাইলে পেন (✎) আইকনে ক্লিক করে এটির নাম বদলে নিতে পারেন।");
+            return;
+        }
+
+        const prof = getActiveProfile();
+        const medCount = prof.medicines.length;
+        const msg = medCount > 0
+            ? `আপনি কি নিশ্চিত যে "${prof.name}" প্রোফাইল এবং এর ভেতরের ${toBengaliNumeral(medCount)}টি ওষুধ স্থায়ীভাবে মুছে ফেলতে চান?`
+            : `আপনি কি নিশ্চিত যে "${prof.name}" প্রোফাইলটি মুছে ফেলতে চান?`;
+
+        if (!confirm(msg)) return;
+
+        delete storeData.profiles[prof.id];
+        storeData.activeProfileId = Object.keys(storeData.profiles)[0];
+        saveAppData(false);
+        resetForm();
+        renderProfileSelector();
+        renderVisits();
+        renderMedicines();
+    }
+
+    function clearProfileData() {
+        const prof = getActiveProfile();
+        if (!confirm(`"${prof.name}" প্রোফাইলের সব ভিজিট এবং ওষুধ মুছে একদম ফ্রেশ করতে চান?`)) return;
+        prof.visits = [];
+        prof.medicines = [];
+        saveAppData(false);
+        renderVisits();
+        renderMedicines();
+    }
 
     let filterLowStock = false;
     let isArchiveView = false;
+    let displayMode = 'grid'; // 'grid' or 'list'
+    let hasInitialCloudSynced = false;
+
+    let stagedBatch = {
+        patientName: '',
+        visitName: '',
+        visitDate: '',
+        medicines: []
+    };
 
     const form = document.getElementById('medicineForm');
     const container = document.getElementById('medicineContainer');
     const searchInput = document.getElementById('searchInput');
+
+    function setDisplayMode(mode) {
+        displayMode = mode;
+        document.getElementById('btnGridView').classList.toggle('active', mode === 'grid');
+        document.getElementById('btnListView').classList.toggle('active', mode === 'list');
+        renderMedicines();
+    }
 
     function updateSyncUI(status, text) {
         const dot = document.getElementById('syncDot');
@@ -921,9 +1731,13 @@
         label.textContent = text;
     }
 
-    // Save to LocalStorage & Firebase Cloud
     async function saveAppData(showAlert = false) {
-        localStorage.setItem('amma_med_app_v9', JSON.stringify(appData));
+        storeData.updatedAt = new Date().toISOString();
+        localStorage.setItem('amma_med_store_v10', JSON.stringify(storeData));
+        renderProfileSelector();
+
+        const activeProf = getActiveProfile();
+
         if (!db) {
             updateSyncUI('offline', 'লোকাল মোড');
             return;
@@ -932,16 +1746,21 @@
         updateSyncUI('', 'আপলোড হচ্ছে...');
         try {
             await db.doc(DOC_REF_PATH).set({
-                visits: appData.visits,
-                medicines: appData.medicines,
-                updatedAt: new Date().toISOString()
+                activeProfileId: storeData.activeProfileId,
+                profiles: storeData.profiles,
+                patientName: activeProf.name,
+                visits: activeProf.visits,
+                medicines: activeProf.medicines,
+                geminiApiKey: storeData.geminiApiKey || localStorage.getItem('amma_gemini_api_key') || '',
+                groqApiKey: storeData.groqApiKey || localStorage.getItem('amma_groq_api_key') || '',
+                updatedAt: storeData.updatedAt
             });
-            updateSyncUI('online', 'ক্লাউড সিঙ্কড');
-            if (showAlert) alert('সব ওষুধ সফলভাবে ফায়ারবেস ক্লাউডে আপলোড ও আপডেট হয়েছে!');
+            updateSyncUI('online', 'অনলাইন (ক্লাউড সিঙ্কড)');
+            if (showAlert) alert('সব প্রোফাইল, ওষুধ ও ভিজিট সফলভাবে ফায়ারবেস ক্লাউডে সেভ হয়েছে!');
         } catch (err) {
             console.error("Firebase save error:", err);
-            updateSyncUI('offline', 'কানেকশন এরর (Firestore Rules চেক করুন)');
-            if (showAlert) alert('ক্লাউডে আপলোড ব্যর্থ হয়েছে!\nকারণ: ' + err.message + '\n\nসমাধান: Firebase Console > Firestore Database > Rules-এ গিয়ে allow read, write: if true; সেট করুন।');
+            updateSyncUI('offline', 'কানেকশন এরর');
+            if (showAlert) alert('ক্লাউডে আপলোড ব্যর্থ হয়েছে!\nকারণ: ' + err.message);
         }
     }
 
@@ -954,17 +1773,62 @@
             updateSyncUI('offline', 'লোকাল মোড');
             return;
         }
+
         db.doc(DOC_REF_PATH).onSnapshot((doc) => {
             if (doc.exists) {
                 const cloudData = doc.data();
-                appData.visits = cloudData.visits || [];
-                appData.medicines = cloudData.medicines || [];
-                localStorage.setItem('amma_med_app_v9', JSON.stringify(appData));
+                const localProf = getActiveProfile();
+
+                if (cloudData.profiles && Object.keys(cloudData.profiles).length > 0) {
+                    storeData.profiles = cloudData.profiles;
+                    if (cloudData.activeProfileId && storeData.profiles[cloudData.activeProfileId]) {
+                        storeData.activeProfileId = cloudData.activeProfileId;
+                    }
+                } else {
+                    const cloudMeds = cloudData.medicines || [];
+                    const cloudVisits = cloudData.visits || [];
+
+                    if (!hasInitialCloudSynced && cloudMeds.length === 0 && localProf.medicines.length > 0) {
+                        hasInitialCloudSynced = true;
+                        saveAppData(false);
+                        return;
+                    }
+
+                    const profName = cloudData.patientName || localProf.name || 'আম্মু';
+                    storeData.profiles['default_profile'] = {
+                        id: 'default_profile',
+                        name: profName,
+                        visits: cloudVisits,
+                        medicines: cloudMeds
+                    };
+                    storeData.activeProfileId = 'default_profile';
+                }
+
+                if (cloudData.geminiApiKey) {
+                    storeData.geminiApiKey = cloudData.geminiApiKey;
+                    localStorage.setItem('amma_gemini_api_key', cloudData.geminiApiKey);
+                }
+                if (cloudData.groqApiKey) {
+                    storeData.groqApiKey = cloudData.groqApiKey;
+                    localStorage.setItem('amma_groq_api_key', cloudData.groqApiKey);
+                }
+
+                storeData.updatedAt = cloudData.updatedAt || new Date().toISOString();
+                localStorage.setItem('amma_med_store_v10', JSON.stringify(storeData));
+
+                hasInitialCloudSynced = true;
+                renderProfileSelector();
                 renderVisits();
                 renderMedicines();
                 updateSyncUI('online', 'অনলাইন (ক্লাউড সিঙ্কড)');
             } else {
-                saveAppData(false);
+                hasInitialCloudSynced = true;
+                const prof = getActiveProfile();
+                if (prof.medicines.length > 0 || prof.visits.length > 0) {
+                    saveAppData(false);
+                } else {
+                    updateSyncUI('online', 'অনলাইন (প্রস্তুত)');
+                }
             }
         }, (error) => {
             console.error("Snapshot error:", error);
@@ -973,8 +1837,48 @@
     }
 
     // =========================================================================
+    // কাস্টম সাইকেল স্ট্যাটাস ক্যালকুলেটর
+    // =========================================================================
+    function getCycleStatus(med, targetDateObj = new Date()) {
+        const cycleDays = parseInt(med.cycleDays) || 28;
+        const baseDateStr = med.cycleStartDate || med.startDate;
+        const start = new Date(baseDateStr + "T00:00:00");
+        const checkDay = new Date(targetDateObj.getFullYear(), targetDateObj.getMonth(), targetDateObj.getDate());
+        const diffDays = Math.floor((checkDay - start) / (1000 * 60 * 60 * 24));
+
+        if (diffDays < 0) {
+            return {
+                isOnPhase: false,
+                daysRemainingInPhase: Math.abs(diffDays),
+                cycleNumber: 1,
+                cycleDays,
+                notStarted: true
+            };
+        }
+
+        const fullCycleLength = cycleDays * 2;
+        const dayInCycle = diffDays % fullCycleLength;
+        const cycleNumber = Math.floor(diffDays / fullCycleLength) + 1;
+
+        if (dayInCycle < cycleDays) {
+            return {
+                isOnPhase: true,
+                daysRemainingInPhase: cycleDays - dayInCycle,
+                cycleNumber,
+                cycleDays
+            };
+        } else {
+            return {
+                isOnPhase: false,
+                daysRemainingInPhase: fullCycleLength - dayInCycle,
+                cycleNumber,
+                cycleDays
+            };
+        }
+    }
+
+    // =========================================================================
     // টাইম-বেজড অটো স্টক ক্যালকুলেশন ইঞ্জিন
-    // সকাল: ১০:০০ পর্যন্ত | দুপুর: ১:০০ - ৩:০০ | রাত: ৭:০০ - ১১:০০
     // =========================================================================
     function getDoseForDate(med, targetDateObj) {
         const start = new Date(med.startDate + "T00:00:00");
@@ -985,8 +1889,16 @@
         return med.doses || { m: 0, n: 0, nt: 0 };
     }
 
+    function isNonStockMode(freqType) {
+        return ['sos', 'therapy', 'vaccine', 'oxygen'].includes(freqType);
+    }
+
     function calculateLiveStock(med) {
         const baseStock = parseFloat(med.currentStock) || 0;
+        if (isNonStockMode(med.freqType)) {
+            return { liveStock: baseStock, consumedSinceUpdate: 0 };
+        }
+
         if (!med.lastStockUpdated) return { liveStock: baseStock, consumedSinceUpdate: 0 };
 
         const updatedTime = new Date(med.lastStockUpdated);
@@ -997,7 +1909,7 @@
         }
 
         let effectiveEndTime = now;
-        if (!med.isContinuous) {
+        if (!med.isContinuous && med.freqType !== 'cycle') {
             const courseEnd = new Date(addDays(med.startDate, med.targetDays) + "T23:59:59");
             if (courseEnd < effectiveEndTime) effectiveEndTime = courseEnd;
         }
@@ -1008,13 +1920,21 @@
 
         let consumed = 0;
 
-        if (med.freqType === 'daily') {
+        if (med.freqType === 'daily' || med.freqType === 'cycle') {
             let cursor = new Date(updatedTime.getFullYear(), updatedTime.getMonth(), updatedTime.getDate());
             const endDay = new Date(effectiveEndTime.getFullYear(), effectiveEndTime.getMonth(), effectiveEndTime.getDate());
 
             const SLOT_HOURS = { m: 10, n: 13, nt: 19 };
 
             while (cursor <= endDay) {
+                if (med.freqType === 'cycle') {
+                    const cStatus = getCycleStatus(med, cursor);
+                    if (!cStatus.isOnPhase) {
+                        cursor.setDate(cursor.getDate() + 1);
+                        continue;
+                    }
+                }
+
                 const dose = getDoseForDate(med, cursor);
                 const mTime = new Date(cursor.getFullYear(), cursor.getMonth(), cursor.getDate(), SLOT_HOURS.m, 0, 0);
                 const nTime = new Date(cursor.getFullYear(), cursor.getMonth(), cursor.getDate(), SLOT_HOURS.n, 0, 0);
@@ -1026,15 +1946,16 @@
 
                 cursor.setDate(cursor.getDate() + 1);
             }
-        } else {
+        } else if (med.freqType === 'weekly') {
             const dayMap = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
             let cursor = new Date(updatedTime.getFullYear(), updatedTime.getMonth(), updatedTime.getDate());
             const endDay = new Date(effectiveEndTime.getFullYear(), effectiveEndTime.getMonth(), effectiveEndTime.getDate());
+            const slotHour = med.weeklyTimeSlot === 'দুপুর' ? 13 : (med.weeklyTimeSlot === 'রাত' ? 19 : 10);
 
             while (cursor <= endDay) {
                 const dayCode = dayMap[cursor.getDay()];
                 if (med.selectedWeekDays && med.selectedWeekDays.includes(dayCode)) {
-                    const takeTime = new Date(cursor.getFullYear(), cursor.getMonth(), cursor.getDate(), 10, 0, 0);
+                    const takeTime = new Date(cursor.getFullYear(), cursor.getMonth(), cursor.getDate(), slotHour, 0, 0);
                     if (takeTime > updatedTime && takeTime <= effectiveEndTime) {
                         consumed += (med.weeklySingleDose || 1);
                     }
@@ -1049,10 +1970,161 @@
 
     function isMedicineRunning(med) {
         if (med.isArchived) return false;
-        if (med.isContinuous) return true;
+        if (med.freqType === 'therapy') {
+            const done = parseInt(med.therapyCompletedSessions) || 0;
+            const total = parseInt(med.therapyTotalSessions) || 1;
+            return done < total;
+        }
+        if (med.freqType === 'vaccine') {
+            const done = parseInt(med.vaccineCompletedDoses) || 0;
+            const total = parseInt(med.vaccineTotalDoses) || 1;
+            return done < total;
+        }
+        if (med.isContinuous || med.freqType === 'cycle' || med.freqType === 'sos' || med.freqType === 'oxygen') return true;
         const todayStr = new Date().toISOString().split('T')[0];
         const endDateStr = addDays(med.startDate, med.targetDays);
         return endDateStr >= todayStr;
+    }
+
+    function consumeSosDose(id, amount = 1) {
+        const prof = getActiveProfile();
+        const med = prof.medicines.find(m => m.id === id);
+        if (!med) return;
+        if (med.currentStock <= 0) {
+            alert('এই ওষুধটির স্টক শেষ হয়ে গেছে!');
+            return;
+        }
+        const deduct = Math.min(med.currentStock, amount);
+        med.currentStock = Math.max(0, +(med.currentStock - deduct).toFixed(2));
+        med.sosTakenCount = (med.sosTakenCount || 0) + deduct;
+        saveAppData(false);
+        renderMedicines();
+    }
+
+    function completeTherapySession(id) {
+        const prof = getActiveProfile();
+        const med = prof.medicines.find(m => m.id === id);
+        if (!med) return;
+        const total = parseInt(med.therapyTotalSessions) || 1;
+        const done = parseInt(med.therapyCompletedSessions) || 0;
+        if (done >= total) return;
+
+        med.therapyCompletedSessions = done + 1;
+        med.therapyLastDate = new Date().toISOString().split('T')[0];
+        if (med.therapyCompletedSessions >= total) {
+            med.isArchived = true;
+        }
+        saveAppData(false);
+        renderMedicines();
+    }
+
+    function completeVaccineDose(id) {
+        const prof = getActiveProfile();
+        const med = prof.medicines.find(m => m.id === id);
+        if (!med) return;
+        const total = parseInt(med.vaccineTotalDoses) || 1;
+        const done = parseInt(med.vaccineCompletedDoses) || 0;
+        if (done >= total) return;
+
+        med.vaccineCompletedDoses = done + 1;
+        med.vaccineLastDate = new Date().toISOString().split('T')[0];
+        if (med.vaccineCompletedDoses >= total) {
+            med.isArchived = true;
+        }
+        saveAppData(false);
+        renderMedicines();
+    }
+
+    // =========================================================================
+    // DRAG & DROP REORDERING
+    // =========================================================================
+    let draggedMedId = null;
+
+    function handleDragStart(e, id) {
+        draggedMedId = id;
+        e.currentTarget.classList.add('dragging');
+        e.dataTransfer.effectAllowed = 'move';
+    }
+
+    function handleDragOver(e) {
+        e.preventDefault();
+        e.dataTransfer.dropEffect = 'move';
+        e.currentTarget.classList.add('drag-over');
+    }
+
+    function handleDragLeave(e) {
+        e.currentTarget.classList.remove('drag-over');
+    }
+
+    function handleDrop(e, targetId) {
+        e.preventDefault();
+        e.currentTarget.classList.remove('drag-over');
+        if (!draggedMedId || draggedMedId === targetId) return;
+
+        const prof = getActiveProfile();
+        const fromIndex = prof.medicines.findIndex(m => m.id === draggedMedId);
+        const toIndex = prof.medicines.findIndex(m => m.id === targetId);
+        if (fromIndex === -1 || toIndex === -1) return;
+
+        const [movedItem] = prof.medicines.splice(fromIndex, 1);
+        prof.medicines.splice(toIndex, 0, movedItem);
+
+        prof.medicines.forEach((m, idx) => m.sortOrder = idx);
+        saveAppData(false);
+        renderMedicines();
+    }
+
+    function handleDragEnd(e) {
+        e.currentTarget.classList.remove('dragging');
+        document.querySelectorAll('.med-card').forEach(c => c.classList.remove('drag-over'));
+    }
+
+    function getOrderedMedicines() {
+        const prof = getActiveProfile();
+        const query = searchInput.value.toLowerCase();
+        let list = prof.medicines.filter(m => m.name.toLowerCase().includes(query));
+
+        if (!isArchiveView) {
+            list = list.filter(m => isMedicineRunning(m));
+        }
+
+        if (filterLowStock) {
+            list = list.filter(m => {
+                if (!isMedicineRunning(m)) return false;
+                if (['therapy', 'vaccine', 'oxygen'].includes(m.freqType)) return false;
+                const { liveStock } = calculateLiveStock(m);
+                if (m.freqType === 'sos') {
+                    return m.sosSubType === 'inhaler' ? liveStock <= 1 : liveStock <= 5;
+                }
+                return (liveStock / (m.dailyQty || 1)) <= 7;
+            });
+        }
+
+        // In Prescription List View, preserve exact prescription serial order!
+        if (displayMode === 'list') {
+            list.sort((a, b) => {
+                const rxA = a.rxSerial !== undefined ? a.rxSerial : (a.sortOrder !== undefined ? a.sortOrder : prof.medicines.indexOf(a));
+                const rxB = b.rxSerial !== undefined ? b.rxSerial : (b.sortOrder !== undefined ? b.sortOrder : prof.medicines.indexOf(b));
+                return rxA - rxB;
+            });
+            return list;
+        }
+
+        list.sort((a, b) => {
+            if (isArchiveView) {
+                const runDiff = (isMedicineRunning(b) ? 1 : 0) - (isMedicineRunning(a) ? 1 : 0);
+                if (runDiff !== 0) return runDiff;
+            }
+            const aCycle = a.freqType === 'cycle' ? 1 : 0;
+            const bCycle = b.freqType === 'cycle' ? 1 : 0;
+            if (aCycle !== bCycle) return bCycle - aCycle;
+
+            const orderA = a.sortOrder !== undefined ? a.sortOrder : prof.medicines.indexOf(a);
+            const orderB = b.sortOrder !== undefined ? b.sortOrder : prof.medicines.indexOf(b);
+            return orderA - orderB;
+        });
+
+        return list;
     }
 
     // =========================================================================
@@ -1072,8 +2144,54 @@
     }
 
     function toggleFreqMode(mode) {
-        document.getElementById('dailyDoseBox').style.display = mode === 'daily' ? 'block' : 'none';
+        document.getElementById('dailyDoseBox').style.display = (mode === 'daily' || mode === 'cycle') ? 'block' : 'none';
         document.getElementById('weeklyDoseBox').style.display = mode === 'weekly' ? 'block' : 'none';
+        document.getElementById('sosDoseBox').style.display = mode === 'sos' ? 'block' : 'none';
+        document.getElementById('cycleInfoBox').style.display = mode === 'cycle' ? 'block' : 'none';
+        document.getElementById('therapyBox').style.display = mode === 'therapy' ? 'block' : 'none';
+        document.getElementById('vaccineBox').style.display = mode === 'vaccine' ? 'block' : 'none';
+        document.getElementById('oxygenBox').style.display = mode === 'oxygen' ? 'block' : 'none';
+
+        document.getElementById('doseChangeOptionWrapper').style.display = mode === 'daily' ? 'block' : 'none';
+        document.getElementById('durationGroupBox').style.display = ['cycle', 'sos', 'therapy', 'vaccine', 'oxygen'].includes(mode) ? 'none' : 'block';
+        document.getElementById('startDateGroupBox').style.display = ['cycle', 'therapy', 'vaccine'].includes(mode) ? 'none' : 'block';
+
+        // Hide stock input for Therapy, Vaccine, and Oxygen
+        const hideStock = ['therapy', 'vaccine', 'oxygen'].includes(mode);
+        document.getElementById('stockGroupBox').style.display = hideStock ? 'none' : 'block';
+        document.getElementById('currentStock').required = !hideStock;
+
+        const todayStr = new Date().toISOString().split('T')[0];
+        if (mode === 'cycle' && !document.getElementById('cycleStartDate').value) {
+            document.getElementById('cycleStartDate').value = todayStr;
+        }
+        if (mode === 'therapy' && !document.getElementById('therapyLastDate').value) {
+            document.getElementById('therapyLastDate').value = todayStr;
+        }
+        if (mode === 'vaccine' && !document.getElementById('vaccineLastDate').value) {
+            document.getElementById('vaccineLastDate').value = todayStr;
+        }
+
+        if (mode !== 'daily') {
+            document.getElementById('hasDoseChange').checked = false;
+            document.getElementById('doseChangeBox').style.display = 'none';
+        }
+        updateStockLabel();
+    }
+
+    function updateStockLabel() {
+        const mode = document.querySelector('input[name="freqType"]:checked').value;
+        const sosSub = document.querySelector('input[name="sosSubType"]:checked')?.value;
+        const label = document.getElementById('currentStockLabel');
+        const input = document.getElementById('currentStock');
+
+        if (mode === 'sos' && sosSub === 'inhaler') {
+            label.textContent = 'বর্তমানে কয়টি ইনহেলার (ক্যানিস্টার) আছে?';
+            input.placeholder = 'যেমন: 2';
+        } else {
+            label.textContent = 'বর্তমানে ঘরে কয়টি আছে?';
+            input.placeholder = 'যেমন: 24';
+        }
     }
 
     function toggleDoseChangeBox() {
@@ -1110,18 +2228,19 @@
     }
 
     function renderVisits() {
+        const prof = getActiveProfile();
         const visitContainer = document.getElementById('visitListContainer');
         const selectBox = document.getElementById('startDateSelect');
         
         visitContainer.innerHTML = '';
         selectBox.innerHTML = '<option value="">আজকের তারিখ (স্বয়ংক্রিয়)</option>';
 
-        appData.visits.sort((a, b) => new Date(a.date) - new Date(b.date));
+        prof.visits.sort((a, b) => new Date(a.date) - new Date(b.date));
 
-        if (appData.visits.length === 0) {
-            visitContainer.innerHTML = '<div style="font-size:0.76rem; color:var(--text-muted); text-align:center;">কোনো ভিজিট তারিখ সেভ করা নেই।</div>';
+        if (prof.visits.length === 0) {
+            visitContainer.innerHTML = '<div style="font-size:0.78rem; color:var(--text-muted); text-align:center;">কোনো ভিজিট তারিখ সেভ করা নেই।</div>';
         } else {
-            appData.visits.forEach(v => {
+            prof.visits.forEach(v => {
                 visitContainer.insertAdjacentHTML('beforeend', `
                     <div class="visit-item">
                         <div>
@@ -1137,19 +2256,21 @@
     }
 
     function addNewVisitDate() {
-        const name = prompt("ভিজিটের নাম লিখুন (যেমন: ১ম ভিজিট):", `${toBengaliNumeral(appData.visits.length + 1)}ম ভিজিট`);
+        const prof = getActiveProfile();
+        const name = prompt("ভিজিটের নাম লিখুন (যেমন: Visit No: 7):", `Visit No: ${prof.visits.length + 1}`);
         if (!name) return;
         const date = prompt("ভিজিটের তারিখ লিখুন (YYYY-MM-DD):", new Date().toISOString().split('T')[0]);
         if (!date) return;
 
-        appData.visits.push({ id: Date.now(), name, date });
+        prof.visits.push({ id: Date.now(), name, date });
         saveAppData(false);
         renderVisits();
     }
 
     function deleteVisitDate(id) {
+        const prof = getActiveProfile();
         if (confirm('এই ভিজিটের তারিখটি মুছে ফেলতে চান?')) {
-            appData.visits = appData.visits.filter(v => v.id !== id);
+            prof.visits = prof.visits.filter(v => v.id !== id);
             saveAppData(false);
             renderVisits();
         }
@@ -1157,6 +2278,7 @@
 
     form.addEventListener('submit', function(e) {
         e.preventDefault();
+        const prof = getActiveProfile();
         
         const id = document.getElementById('medId').value;
         const name = document.getElementById('medName').value.trim();
@@ -1168,42 +2290,89 @@
         let hasDoseChange = false;
         let selectedWeekDays = [];
         let weeklySingleDose = 1;
+        let weeklyTimeSlot = 'সকাল';
+        let sosSubType = 'piece';
+        let cycleDays = 28;
+        let cycleStartDate = '';
 
-        if (freqType === 'daily') {
+        // Therapy / Vaccine / Oxygen fields
+        let therapyIntervalDays = 7;
+        let therapyTotalSessions = 16;
+        let therapyCompletedSessions = 0;
+        let therapyLastDate = '';
+
+        let vaccineIntervalDays = 180;
+        let vaccineTotalDoses = 6;
+        let vaccineCompletedDoses = 1;
+        let vaccineLastDate = '';
+
+        let oxygenDailyHours = 18;
+        let oxygenFlowRate = '2-4 L/min';
+
+        const todayStr = new Date().toISOString().split('T')[0];
+
+        if (freqType === 'daily' || freqType === 'cycle') {
             const m = parseFloat(document.getElementById('doseMorning').value);
             const n = parseFloat(document.getElementById('doseNoon').value);
             const nt = parseFloat(document.getElementById('doseNight').value);
             doses = { m, n, nt };
             dailyQty = m + n + nt;
 
-            hasDoseChange = document.getElementById('hasDoseChange').checked;
-            if (hasDoseChange) {
-                nextDoses = {
-                    m: parseFloat(document.getElementById('nextDoseMorning').value),
-                    n: parseFloat(document.getElementById('nextDoseNoon').value),
-                    nt: parseFloat(document.getElementById('nextDoseNight').value)
-                };
+            if (dailyQty <= 0) {
+                alert('অনুগ্রহ করে সেবনের মাত্রা নির্বাচন করুন।');
+                return;
             }
-        } else {
+
+            if (freqType === 'cycle') {
+                cycleDays = parseInt(document.getElementById('cycleDays').value) || 28;
+                cycleStartDate = document.getElementById('cycleStartDate').value || todayStr;
+            } else {
+                hasDoseChange = document.getElementById('hasDoseChange').checked;
+                if (hasDoseChange) {
+                    nextDoses = {
+                        m: parseFloat(document.getElementById('nextDoseMorning').value),
+                        n: parseFloat(document.getElementById('nextDoseNoon').value),
+                        nt: parseFloat(document.getElementById('nextDoseNight').value)
+                    };
+                }
+            }
+        } else if (freqType === 'weekly') {
             document.querySelectorAll('.week-day-input:checked').forEach(cb => selectedWeekDays.push(cb.value));
             weeklySingleDose = parseFloat(document.getElementById('weeklySingleDose').value) || 1;
+            weeklyTimeSlot = document.getElementById('weeklyTimeSlot').value || 'সকাল';
             dailyQty = (selectedWeekDays.length * weeklySingleDose) / 7;
+
+            if (dailyQty <= 0) {
+                alert('অনুগ্রহ করে সপ্তাহের দিন নির্বাচন করুন।');
+                return;
+            }
+        } else if (freqType === 'sos') {
+            dailyQty = 0;
+            sosSubType = document.querySelector('input[name="sosSubType"]:checked')?.value || 'piece';
+        } else if (freqType === 'therapy') {
+            therapyIntervalDays = parseInt(document.getElementById('therapyIntervalDays').value) || 7;
+            therapyTotalSessions = parseInt(document.getElementById('therapyTotalSessions').value) || 16;
+            therapyCompletedSessions = parseInt(document.getElementById('therapyCompletedSessions').value) || 0;
+            therapyLastDate = document.getElementById('therapyLastDate').value || todayStr;
+        } else if (freqType === 'vaccine') {
+            vaccineIntervalDays = parseInt(document.getElementById('vaccineIntervalDays').value) || 180;
+            vaccineTotalDoses = parseInt(document.getElementById('vaccineTotalDoses').value) || 6;
+            vaccineCompletedDoses = parseInt(document.getElementById('vaccineCompletedDoses').value) || 1;
+            vaccineLastDate = document.getElementById('vaccineLastDate').value || todayStr;
+        } else if (freqType === 'oxygen') {
+            oxygenDailyHours = parseFloat(document.getElementById('oxygenDailyHours').value) || 18;
+            oxygenFlowRate = document.getElementById('oxygenFlowRate').value.trim() || '2-4 L/min';
         }
 
-        if (dailyQty <= 0) {
-            alert('অনুগ্রহ করে সেবনের মাত্রা নির্বাচন করুন।');
-            return;
-        }
-
-        const currentStock = parseFloat(document.getElementById('currentStock').value);
-        let startDate = document.getElementById('startDateSelect').value;
-        if (!startDate) startDate = new Date().toISOString().split('T')[0];
+        const currentStock = isNonStockMode(freqType) ? 0 : (parseFloat(document.getElementById('currentStock').value) || 0);
+        let startDate = freqType === 'cycle' ? cycleStartDate : (freqType === 'therapy' ? therapyLastDate : (freqType === 'vaccine' ? vaccineLastDate : document.getElementById('startDateSelect').value));
+        if (!startDate) startDate = todayStr;
 
         const durationMode = document.getElementById('durationMode').value;
         let targetDays = 30;
         let isContinuous = false;
 
-        if (durationMode === 'continuous') {
+        if (['cycle', 'sos', 'therapy', 'vaccine', 'oxygen'].includes(freqType) || durationMode === 'continuous') {
             isContinuous = true;
             targetDays = 0;
         } else if (durationMode === 'custom') {
@@ -1218,11 +2387,25 @@
             id: id ? Number(id) : Date.now(),
             name,
             freqType,
+            cycleDays,
+            cycleStartDate,
+            sosSubType,
+            therapyIntervalDays,
+            therapyTotalSessions,
+            therapyCompletedSessions,
+            therapyLastDate,
+            vaccineIntervalDays,
+            vaccineTotalDoses,
+            vaccineCompletedDoses,
+            vaccineLastDate,
+            oxygenDailyHours,
+            oxygenFlowRate,
             doses,
             hasDoseChange,
             nextDoses,
             selectedWeekDays,
             weeklySingleDose,
+            weeklyTimeSlot,
             dailyQty,
             currentStock,
             lastStockUpdated: new Date().toISOString(),
@@ -1234,13 +2417,18 @@
         };
 
         if (id) {
-            const index = appData.medicines.findIndex(item => item.id == id);
+            const index = prof.medicines.findIndex(item => item.id == id);
             if (index !== -1) {
-                medObj.isArchived = appData.medicines[index].isArchived || false;
-                appData.medicines[index] = medObj;
+                medObj.isArchived = prof.medicines[index].isArchived || false;
+                medObj.sosTakenCount = prof.medicines[index].sosTakenCount || 0;
+                medObj.sortOrder = prof.medicines[index].sortOrder;
+                medObj.rxSerial = prof.medicines[index].rxSerial;
+                prof.medicines[index] = medObj;
             }
         } else {
-            appData.medicines.push(medObj);
+            medObj.sortOrder = prof.medicines.length;
+            medObj.rxSerial = prof.medicines.length + 1;
+            prof.medicines.push(medObj);
         }
 
         saveAppData(false);
@@ -1254,6 +2442,8 @@
         document.getElementById('customDaysBox').style.display = "none";
         document.getElementById('doseChangeBox').style.display = "none";
         document.getElementById('durationMode').value = "30";
+        document.getElementById('cycleDays').value = "28";
+        document.getElementById('oxygenDailyHours').value = "18";
         toggleFreqMode('daily');
         document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active'));
         document.getElementById('submitBtn').innerHTML = '<i class="fa-solid fa-floppy-disk"></i> সেভ করুন';
@@ -1274,13 +2464,20 @@
     }
 
     function getRequiredForPeriod(med, fromDate, totalDays) {
+        if (isNonStockMode(med.freqType)) return 0;
         let total = 0;
         const start = new Date(med.startDate);
         const current = new Date(fromDate);
 
         for (let i = 0; i < totalDays; i++) {
-            const dayDiff = Math.floor((current - start) / (1000 * 60 * 60 * 24));
-            if (med.freqType === 'daily') {
+            if (med.freqType === 'cycle') {
+                const cStatus = getCycleStatus(med, current);
+                if (cStatus.isOnPhase) {
+                    const d = med.doses || { m: 0, n: 0, nt: 0 };
+                    total += (d.m + d.n + d.nt);
+                }
+            } else if (med.freqType === 'daily') {
+                const dayDiff = Math.floor((current - start) / (1000 * 60 * 60 * 24));
                 if (med.hasDoseChange && dayDiff >= 30) {
                     const d2 = med.nextDoses || { m: 0, n: 0, nt: 0 };
                     total += (d2.m + d2.n + d2.nt);
@@ -1303,53 +2500,67 @@
         renderMedicines();
     }
 
-    // Move to archive immediately on Remove button click
     function moveToArchive(id) {
-        const med = appData.medicines.find(m => m.id === id);
+        const prof = getActiveProfile();
+        const med = prof.medicines.find(m => m.id === id);
         if (!med) return;
         med.isArchived = true;
         saveAppData(false);
         renderMedicines();
     }
 
-    // Restore from archive back to active list
     function restoreFromArchive(id) {
-        const med = appData.medicines.find(m => m.id === id);
+        const prof = getActiveProfile();
+        const med = prof.medicines.find(m => m.id === id);
         if (!med) return;
         med.isArchived = false;
         saveAppData(false);
         renderMedicines();
     }
 
-    // Permanent delete (only inside Archive view)
     function permanentDeleteMedicine(id) {
-        if (confirm('আর্কাইভ থেকে এই ওষুধটি স্থায়ীভাবে মুছে ফেলতে চান?')) {
-            appData.medicines = appData.medicines.filter(m => m.id !== id);
+        const prof = getActiveProfile();
+        if (confirm('আর্কাইভ থেকে এই আইটেমটি স্থায়ীভাবে মুছে ফেলতে চান?')) {
+            prof.medicines = prof.medicines.filter(m => m.id !== id);
             saveAppData(false);
             renderMedicines();
         }
     }
 
+    // Build clean prescription instruction string for List View
+    function buildPrescriptionInstructionText(med) {
+        if (med.freqType === 'therapy') {
+            return `${toBengaliNumeral(med.therapyIntervalDays || 7)} দিন পরপর --- মোট ${toBengaliNumeral(med.therapyTotalSessions || 16)} টি সেশন (সম্পন্ন: ${toBengaliNumeral(med.therapyCompletedSessions || 0)}টি) ${med.note ? '-- ' + med.note : ''}`;
+        }
+        if (med.freqType === 'vaccine') {
+            return `${toBengaliNumeral(med.vaccineIntervalDays || 180)} দিন পরপর --- মোট ${toBengaliNumeral(med.vaccineTotalDoses || 6)} ডোজ (সম্পন্ন: ${toBengaliNumeral(med.vaccineCompletedDoses || 0)}টি) ${med.note ? '-- ' + med.note : ''}`;
+        }
+        if (med.freqType === 'oxygen') {
+            return `ফ্লো: ${med.oxygenFlowRate || '2-4 L/min'} --- প্রতিদিন ${toBengaliNumeral(med.oxygenDailyHours || 18)} ঘণ্টা (২৪ ঘণ্টার মধ্যে) --- নিয়মিত চলবে ${med.note ? '-- ' + med.note : ''}`;
+        }
+        if (med.freqType === 'sos') {
+            return `প্রয়োজন মতো (SOS) ${med.note ? '--- ' + med.note : ''}`;
+        }
+        if (med.freqType === 'cycle') {
+            const cDays = med.cycleDays || 28;
+            return `${toBengaliNumeral(formatDoseVal(med.doses.m))}+${toBengaliNumeral(formatDoseVal(med.doses.n))}+${toBengaliNumeral(formatDoseVal(med.doses.nt))} --- ${toBengaliNumeral(cDays)} দিন চালু, ${toBengaliNumeral(cDays)} দিন বিরতি --- নিয়মিত চলবে ${med.note ? '-- ' + med.note : ''}`;
+        }
+        if (med.freqType === 'weekly') {
+            const dayNames = { sat: 'শনি', sun: 'রবি', mon: 'সোম', tue: 'মঙ্গল', wed: 'বুধ', thu: 'বৃহস্পতি', fri: 'শুক্র' };
+            const daysText = (med.selectedWeekDays || []).map(d => dayNames[d] || d).join(', ');
+            return `সপ্তাহে ${toBengaliNumeral((med.selectedWeekDays || []).length)} দিন (${daysText} - ${med.weeklyTimeSlot || 'সকাল'}) --- ${med.isContinuous ? 'চলবে' : toBengaliNumeral(med.targetDays) + ' দিন'} ${med.note ? '-- ' + med.note : ''}`;
+        }
+        const doseStr = `${toBengaliNumeral(formatDoseVal(med.doses.m))}+${toBengaliNumeral(formatDoseVal(med.doses.n))}+${toBengaliNumeral(formatDoseVal(med.doses.nt))}`;
+        const durStr = med.isContinuous ? 'নিয়মিত চলবে' : `${toBengaliNumeral(med.targetDays)} দিন`;
+        return `${doseStr} --- ${durStr} ${med.note ? '--- ' + med.note : ''}`;
+    }
+
     function renderMedicines() {
-        const query = searchInput.value.toLowerCase();
         container.innerHTML = '';
-
-        let filtered = appData.medicines.filter(m => m.name.toLowerCase().includes(query));
-
-        if (!isArchiveView) {
-            filtered = filtered.filter(m => isMedicineRunning(m));
-        } else {
-            filtered.sort((a, b) => (isMedicineRunning(b) ? 1 : 0) - (isMedicineRunning(a) ? 1 : 0));
-        }
-
-        if (filterLowStock) {
-            filtered = filtered.filter(m => {
-                const { liveStock } = calculateLiveStock(m);
-                return isMedicineRunning(m) && (liveStock / (m.dailyQty || 1)) <= 7;
-            });
-        }
+        const filtered = getOrderedMedicines();
 
         if (filtered.length === 0) {
+            container.className = 'medicine-list';
             container.innerHTML = `
                 <div class="empty-state">
                     <i class="fa-solid fa-pills" style="font-size:2.2rem; margin-bottom:8px; color:#cbd5e0;"></i>
@@ -1359,17 +2570,86 @@
             return;
         }
 
+        // =====================================================================
+        // MODE A: CLEAN PRESCRIPTION LIST VIEW (1, 2, 3... strictly Rx part)
+        // =====================================================================
+        if (displayMode === 'list') {
+            container.className = '';
+            let rxItemsHtml = '';
+            filtered.forEach((med, index) => {
+                const serial = med.rxSerial || (index + 1);
+                const running = isMedicineRunning(med);
+                const instr = buildPrescriptionInstructionText(med);
+
+                rxItemsHtml += `
+                    <div class="rx-item ${!running ? 'rx-inactive' : ''}">
+                        <div class="rx-main">
+                            <div class="rx-name">${toBengaliNumeral(serial)}. ${escapeHtml(med.name)}</div>
+                            <div class="rx-instruction">${escapeHtml(instr)}</div>
+                        </div>
+                        <div class="rx-actions">
+                            <button class="btn-icon" onclick="editMedicine(${med.id})" title="সম্পাদনা">
+                                <i class="fa-solid fa-pen-to-square"></i>
+                            </button>
+                            ${running
+                                ? `<button class="btn-icon remove" onclick="moveToArchive(${med.id})" title="বন্ধ/আর্কাইভ করুন"><i class="fa-solid fa-box-archive"></i></button>`
+                                : `<button class="btn-icon restore" onclick="restoreFromArchive(${med.id})" title="পুনরায় চালু করুন"><i class="fa-solid fa-rotate-left"></i></button>`
+                            }
+                        </div>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = `
+                <div class="prescription-sheet">
+                    <div class="rx-header-symbol">
+                        <span>℞ PRESCRIPTION</span>
+                        <span style="font-size:0.85rem; font-weight:600; color:#64748b;">মোট: ${toBengaliNumeral(filtered.length)} টি আইটেম</span>
+                    </div>
+                    ${rxItemsHtml}
+                </div>
+            `;
+            return;
+        }
+
+        // =====================================================================
+        // MODE B: DETAILED GRID VIEW (Original Card View + New Categories)
+        // =====================================================================
+        container.className = 'medicine-list';
         const todayStr = new Date().toISOString().split('T')[0];
         const todayDate = new Date(todayStr);
 
-        filtered.forEach(med => {
+        filtered.forEach((med) => {
             const running = isMedicineRunning(med);
             const { liveStock, consumedSinceUpdate } = calculateLiveStock(med);
-            const daysLeft = Math.floor(liveStock / (med.dailyQty || 1));
+            const isSos = med.freqType === 'sos';
+            const isCycle = med.freqType === 'cycle';
+            const isTherapy = med.freqType === 'therapy';
+            const isVaccine = med.freqType === 'vaccine';
+            const isOxygen = med.freqType === 'oxygen';
+            const isInhaler = isSos && med.sosSubType === 'inhaler';
+            const daysLeft = isNonStockMode(med.freqType) ? 0 : Math.floor(liveStock / (med.dailyQty || 1));
 
             let dosePattern = '';
-            if (med.freqType === 'weekly') {
-                dosePattern = `সপ্তাহে ${toBengaliNumeral(med.selectedWeekDays.length)} দিন (${formatDoseVal(med.weeklySingleDose)} টি)`;
+            let badgeExtraClass = '';
+            if (isTherapy) {
+                dosePattern = `থেরাপি (${toBengaliNumeral(med.therapyIntervalDays || 7)} দিন পরপর)`;
+                badgeExtraClass = 'therapy-badge';
+            } else if (isVaccine) {
+                dosePattern = `ভ্যাকসিন / ইনজেকশন`;
+                badgeExtraClass = 'vaccine-badge';
+            } else if (isOxygen) {
+                dosePattern = `দৈনিক ${toBengaliNumeral(med.oxygenDailyHours || 18)} ঘণ্টা`;
+                badgeExtraClass = 'oxygen-badge';
+            } else if (isSos) {
+                dosePattern = isInhaler ? `ইনহেলার (SOS)` : `প্রয়োজন মতো (SOS)`;
+                badgeExtraClass = 'sos-badge';
+            } else if (isCycle) {
+                const cDays = med.cycleDays || 28;
+                dosePattern = `${formatDoseVal(med.doses.m)}+${formatDoseVal(med.doses.n)}+${formatDoseVal(med.doses.nt)} (${toBengaliNumeral(cDays)} দিন সাইকেল)`;
+                badgeExtraClass = 'cycle-badge';
+            } else if (med.freqType === 'weekly') {
+                dosePattern = `সপ্তাহে ${toBengaliNumeral(med.selectedWeekDays.length)} দিন (${med.weeklyTimeSlot || 'সকাল'})`;
             } else {
                 dosePattern = `${formatDoseVal(med.doses.m)}+${formatDoseVal(med.doses.n)}+${formatDoseVal(med.doses.nt)}`;
                 if (med.hasDoseChange) {
@@ -1377,49 +2657,115 @@
                 }
             }
 
-            let doseLabelHtml = med.freqType === 'weekly'
-                ? `<div class="stat-row"><span class="stat-label">সাপ্তাহিক সেবন:</span><span class="stat-value">${toBengaliNumeral(med.selectedWeekDays.length)} দিন (${formatDoseVal(med.weeklySingleDose)} টি)</span></div>`
-                : `<div class="stat-row"><span class="stat-label">দৈনিক সেবন:</span><span class="stat-value">${toBengaliNumeral(med.doses.m + med.doses.n + med.doses.nt)} টি</span></div>`;
-
             let statRowHtml = '';
-            let endDateText = '';
+            let endDateText = (med.isContinuous || isNonStockMode(med.freqType) || isCycle) ? 'চলবে (স্থায়ী)' : formatDate(addDays(med.startDate, med.targetDays));
+            let cycleStatus = isCycle ? getCycleStatus(med) : null;
 
-            if (med.isContinuous) {
-                endDateText = 'চলবে (স্থায়ী)';
-                const monthlyRequired = Math.ceil(getRequiredForPeriod(med, todayStr, 30));
-                const now = new Date();
-                const lastDayOfCurrMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
-                const remainingDaysInMonth = lastDayOfCurrMonth - now.getDate() + 1;
-                const currentMonthRequired = Math.ceil(getRequiredForPeriod(med, todayStr, remainingDaysInMonth));
-                const shortageCurrentMonth = currentMonthRequired - liveStock;
-
-                const monthStatusText = shortageCurrentMonth > 0 ? `${toBengaliNumeral(shortageCurrentMonth.toFixed(1))} টি` : 'প্রয়োজন নেই';
-                const monthStatusColor = shortageCurrentMonth > 0 ? 'var(--danger-color)' : 'var(--success-color)';
+            if (isTherapy) {
+                const done = parseInt(med.therapyCompletedSessions) || 0;
+                const total = parseInt(med.therapyTotalSessions) || 16;
+                const interval = parseInt(med.therapyIntervalDays) || 7;
+                const lastDate = med.therapyLastDate || med.startDate;
+                const nextDateStr = addDays(lastDate, interval);
+                const daysUntilNext = Math.ceil((new Date(nextDateStr) - todayDate) / (1000 * 60 * 60 * 24));
 
                 statRowHtml = `
-                    ${doseLabelHtml}
+                    <div class="stat-row">
+                        <span class="stat-label">সেশন অগ্রগতি:</span>
+                        <span class="stat-value" style="color:#0f766e;">${toBengaliNumeral(done)} / ${toBengaliNumeral(total)} টি সম্পন্ন</span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="stat-label">শেষ সেশন:</span>
+                        <span class="stat-value">${formatDate(lastDate)}</span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="stat-label">পরবর্তী সেশন:</span>
+                        <span class="stat-value" style="color:#1e3c72;">${formatDate(nextDateStr)} (${daysUntilNext <= 0 ? 'আজই' : 'আর ' + toBengaliNumeral(daysUntilNext) + ' দিন পর'})</span>
+                    </div>
+                `;
+            } else if (isVaccine) {
+                const done = parseInt(med.vaccineCompletedDoses) || 0;
+                const total = parseInt(med.vaccineTotalDoses) || 6;
+                const interval = parseInt(med.vaccineIntervalDays) || 180;
+                const lastDate = med.vaccineLastDate || med.startDate;
+                const nextDateStr = addDays(lastDate, interval);
+                const daysUntilNext = Math.ceil((new Date(nextDateStr) - todayDate) / (1000 * 60 * 60 * 24));
+
+                statRowHtml = `
+                    <div class="stat-row">
+                        <span class="stat-label">ডোজ সম্পন্ন:</span>
+                        <span class="stat-value" style="color:#be123c;">${toBengaliNumeral(done)} / ${toBengaliNumeral(total)} টি ডোজ</span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="stat-label">সর্বশেষ ডোজের তারিখ:</span>
+                        <span class="stat-value">${formatDate(lastDate)}</span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="stat-label">পরবর্তী ডোজের তারিখ:</span>
+                        <span class="stat-value" style="color:#1e3c72;">${formatDate(nextDateStr)} (${daysUntilNext <= 0 ? 'সময় হয়েছে' : 'আর ' + toBengaliNumeral(daysUntilNext) + ' দিন পর'})</span>
+                    </div>
+                `;
+            } else if (isOxygen) {
+                statRowHtml = `
+                    <div class="stat-row">
+                        <span class="stat-label">অক্সিজেন ফ্লো রেট:</span>
+                        <span class="stat-value" style="color:#1d4ed8;">${escapeHtml(med.oxygenFlowRate || '2-4 L/min')}</span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="stat-label">দৈনিক ব্যবহারের সময়:</span>
+                        <span class="stat-value" style="color:#1e3c72;">১৮ ঘণ্টা / ২৪ ঘণ্টা (${toBengaliNumeral(med.oxygenDailyHours || 18)} ঘণ্টা)</span>
+                    </div>
+                `;
+            } else if (isSos) {
+                statRowHtml = `
+                    <div class="stat-row">
+                        <span class="stat-label">ধরন:</span>
+                        <span class="stat-value" style="color:#7e22ce;">${isInhaler ? 'ইনহেলার (প্রয়োজন মতো)' : 'প্রয়োজন অনুযায়ী (১–৩+ বার)'}</span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="stat-label">${isInhaler ? 'বর্তমান ইনহেলার স্টক:' : 'বর্তমান অবশিষ্ট স্টক:'}</span>
+                        <span class="stat-value" style="color:#1e3c72; font-size:0.96rem;">${toBengaliNumeral(liveStock)} ${isInhaler ? 'টি ইনহেলার' : 'টি'}</span>
+                    </div>
+                `;
+            } else if (isCycle) {
+                const dailyD = med.doses.m + med.doses.n + med.doses.nt;
+                const cycleNeeded = Math.ceil(dailyD * cycleStatus.cycleDays);
+                const phaseText = cycleStatus.notStarted
+                    ? `শুরু হতে বাকি ${toBengaliNumeral(cycleStatus.daysRemainingInPhase)} দিন`
+                    : cycleStatus.isOnPhase
+                        ? `চলমান (আর ${toBengaliNumeral(cycleStatus.daysRemainingInPhase)} দিন চলবে)`
+                        : `বিরতি চলছে (আর ${toBengaliNumeral(cycleStatus.daysRemainingInPhase)} দিন বন্ধ)`;
+
+                statRowHtml = `
+                    <div class="stat-row">
+                        <span class="stat-label">সাইকেল (${toBengaliNumeral(cycleStatus.cycleNumber)}ম বার):</span>
+                        <span class="stat-value" style="color:${cycleStatus.isOnPhase ? '#047857' : '#b45309'};">${phaseText}</span>
+                    </div>
                     <div class="stat-row">
                         <span class="stat-label">বর্তমান স্টক:</span>
                         <span class="stat-value" style="color:#1e3c72;">${toBengaliNumeral(liveStock)} টি</span>
                     </div>
                     <div class="stat-row">
-                        <span class="stat-label">১ মাসের (৩০ দিন) প্রয়োজন:</span>
-                        <span class="stat-value">${toBengaliNumeral(monthlyRequired)} টি</span>
-                    </div>
-                    <div class="stat-row" style="color: ${monthStatusColor}">
-                        <span class="stat-label" style="color: inherit; font-weight: 600;">চলতি মাসে (${toBengaliNumeral(remainingDaysInMonth)} দিন) কম পড়বে:</span>
-                        <span class="stat-value">${monthStatusText}</span>
+                        <span class="stat-label">প্রতি ${toBengaliNumeral(cycleStatus.cycleDays)} দিনের সাইকেলে লাগে:</span>
+                        <span class="stat-value">${toBengaliNumeral(cycleNeeded)} টি</span>
                     </div>
                 `;
             } else {
-                const endDateStr = addDays(med.startDate, med.targetDays);
-                endDateText = formatDate(endDateStr);
-                const endDateObj = new Date(endDateStr);
-                const remainingDays = Math.max(0, Math.ceil((endDateObj - todayDate) / (1000 * 60 * 60 * 24)));
-                const requiredForRemainingCourse = Math.ceil(getRequiredForPeriod(med, todayStr, remainingDays));
+                let doseLabelHtml = med.freqType === 'weekly'
+                    ? `<div class="stat-row"><span class="stat-label">সাপ্তাহিক সেবন:</span><span class="stat-value">${toBengaliNumeral(med.selectedWeekDays.length)} দিন (${formatDoseVal(med.weeklySingleDose)} টি - ${med.weeklyTimeSlot || 'সকাল'})</span></div>`
+                    : `<div class="stat-row"><span class="stat-label">দৈনিক সেবন:</span><span class="stat-value">${toBengaliNumeral(med.doses.m + med.doses.n + med.doses.nt)} টি</span></div>`;
 
-                if (liveStock >= requiredForRemainingCourse) {
-                    const surplus = liveStock - requiredForRemainingCourse;
+                if (med.isContinuous) {
+                    const monthlyRequired = Math.ceil(getRequiredForPeriod(med, todayStr, 30));
+                    const now = new Date();
+                    const lastDayOfCurrMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
+                    const remainingDaysInMonth = lastDayOfCurrMonth - now.getDate() + 1;
+                    const currentMonthRequired = Math.ceil(getRequiredForPeriod(med, todayStr, remainingDaysInMonth));
+                    const shortageCurrentMonth = currentMonthRequired - liveStock;
+
+                    const monthStatusText = shortageCurrentMonth > 0 ? `${toBengaliNumeral(shortageCurrentMonth.toFixed(1))} টি` : 'প্রয়োজন নেই';
+                    const monthStatusColor = shortageCurrentMonth > 0 ? 'var(--danger-color)' : 'var(--success-color)';
+
                     statRowHtml = `
                         ${doseLabelHtml}
                         <div class="stat-row">
@@ -1427,31 +2773,55 @@
                             <span class="stat-value" style="color:#1e3c72;">${toBengaliNumeral(liveStock)} টি</span>
                         </div>
                         <div class="stat-row">
-                            <span class="stat-label">কোর্স শেষের বাকি:</span>
-                            <span class="stat-value">${toBengaliNumeral(remainingDays)} দিন (${toBengaliNumeral(requiredForRemainingCourse)} টি)</span>
+                            <span class="stat-label">১ মাসের (৩০ দিন) প্রয়োজন:</span>
+                            <span class="stat-value">${toBengaliNumeral(monthlyRequired)} টি</span>
                         </div>
-                        <div class="stat-row" style="color: var(--success-color)">
-                            <span class="stat-label" style="color: inherit; font-weight: 600;">কোর্স শেষে অতিরিক্ত থাকবে:</span>
-                            <span class="stat-value">${toBengaliNumeral(surplus.toFixed(1))} টি</span>
+                        <div class="stat-row" style="color: ${monthStatusColor}">
+                            <span class="stat-label" style="color: inherit; font-weight: 600;">চলতি মাসে (${toBengaliNumeral(remainingDaysInMonth)} দিন) কম পড়বে:</span>
+                            <span class="stat-value">${monthStatusText}</span>
                         </div>
                     `;
                 } else {
-                    const shortage = requiredForRemainingCourse - liveStock;
-                    statRowHtml = `
-                        ${doseLabelHtml}
-                        <div class="stat-row">
-                            <span class="stat-label">বর্তমান স্টক:</span>
-                            <span class="stat-value" style="color:#1e3c72;">${toBengaliNumeral(liveStock)} টি</span>
-                        </div>
-                        <div class="stat-row">
-                            <span class="stat-label">কোর্স শেষের বাকি:</span>
-                            <span class="stat-value">${toBengaliNumeral(remainingDays)} দিন (${toBengaliNumeral(requiredForRemainingCourse)} টি)</span>
-                        </div>
-                        <div class="stat-row" style="color: var(--danger-color)">
-                            <span class="stat-label" style="color: inherit; font-weight: 600;">কোর্স সম্পূর্ণ করতে কম পড়বে:</span>
-                            <span class="stat-value">${toBengaliNumeral(shortage.toFixed(1))} টি</span>
-                        </div>
-                    `;
+                    const endDateStr = addDays(med.startDate, med.targetDays);
+                    const endDateObj = new Date(endDateStr);
+                    const remainingDays = Math.max(0, Math.ceil((endDateObj - todayDate) / (1000 * 60 * 60 * 24)));
+                    const requiredForRemainingCourse = Math.ceil(getRequiredForPeriod(med, todayStr, remainingDays));
+
+                    if (liveStock >= requiredForRemainingCourse) {
+                        const surplus = liveStock - requiredForRemainingCourse;
+                        statRowHtml = `
+                            ${doseLabelHtml}
+                            <div class="stat-row">
+                                <span class="stat-label">বর্তমান স্টক:</span>
+                                <span class="stat-value" style="color:#1e3c72;">${toBengaliNumeral(liveStock)} টি</span>
+                            </div>
+                            <div class="stat-row">
+                                <span class="stat-label">কোর্স শেষের বাকি:</span>
+                                <span class="stat-value">${toBengaliNumeral(remainingDays)} দিন (${toBengaliNumeral(requiredForRemainingCourse)} টি)</span>
+                            </div>
+                            <div class="stat-row" style="color: var(--success-color)">
+                                <span class="stat-label" style="color: inherit; font-weight: 600;">কোর্স শেষে অতিরিক্ত থাকবে:</span>
+                                <span class="stat-value">${toBengaliNumeral(surplus.toFixed(1))} টি</span>
+                            </div>
+                        `;
+                    } else {
+                        const shortage = requiredForRemainingCourse - liveStock;
+                        statRowHtml = `
+                            ${doseLabelHtml}
+                            <div class="stat-row">
+                                <span class="stat-label">বর্তমান স্টক:</span>
+                                <span class="stat-value" style="color:#1e3c72;">${toBengaliNumeral(liveStock)} টি</span>
+                            </div>
+                            <div class="stat-row">
+                                <span class="stat-label">কোর্স শেষের বাকি:</span>
+                                <span class="stat-value">${toBengaliNumeral(remainingDays)} দিন (${toBengaliNumeral(requiredForRemainingCourse)} টি)</span>
+                            </div>
+                            <div class="stat-row" style="color: var(--danger-color)">
+                                <span class="stat-label" style="color: inherit; font-weight: 600;">কোর্স সম্পূর্ণ করতে কম পড়বে:</span>
+                                <span class="stat-value">${toBengaliNumeral(shortage.toFixed(1))} টি</span>
+                            </div>
+                        `;
+                    }
                 }
             }
 
@@ -1460,7 +2830,34 @@
 
             if (!running) {
                 badgeClass = 'badge-archived';
-                statusText = med.isArchived ? 'আর্কাইভ করা হয়েছে' : 'কোর্সের মেয়াদ শেষ';
+                statusText = med.isArchived ? 'আর্কাইভ করা হয়েছে' : 'কোর্স / সেশন সম্পন্ন';
+            } else if (isTherapy) {
+                const rem = (parseInt(med.therapyTotalSessions) || 16) - (parseInt(med.therapyCompletedSessions) || 0);
+                badgeClass = 'badge-therapy';
+                statusText = `আর ${toBengaliNumeral(rem)} টি সেশন বাকি আছে`;
+            } else if (isVaccine) {
+                const rem = (parseInt(med.vaccineTotalDoses) || 6) - (parseInt(med.vaccineCompletedDoses) || 0);
+                badgeClass = 'badge-vaccine';
+                statusText = `আর ${toBengaliNumeral(rem)} টি ডোজ বাকি আছে`;
+            } else if (isOxygen) {
+                badgeClass = 'badge-oxygen';
+                statusText = `দৈনিক ${toBengaliNumeral(med.oxygenDailyHours || 18)} ঘণ্টা সাপোর্ট চলবে`;
+            } else if (isSos) {
+                if (isInhaler) {
+                    badgeClass = liveStock <= 1 ? 'badge-danger' : 'badge-sos';
+                    statusText = liveStock <= 1 ? `ইনহেলার স্টক কম (${toBengaliNumeral(liveStock)} টি বাকি)` : `প্রয়োজন অনুযায়ী ব্যবহারযোগ্য`;
+                } else {
+                    badgeClass = liveStock <= 4 ? 'badge-danger' : 'badge-sos';
+                    statusText = liveStock <= 4 ? `স্টক কম! (${toBengaliNumeral(liveStock)} টি বাকি)` : `প্রয়োজন অনুযায়ী সেবনযোগ্য`;
+                }
+            } else if (isCycle) {
+                if (!cycleStatus.isOnPhase && !cycleStatus.notStarted) {
+                    badgeClass = 'badge-cycle-rest';
+                    statusText = `${toBengaliNumeral(cycleStatus.cycleDays)} দিনের বিরতি চলছে • আর ${toBengaliNumeral(cycleStatus.daysRemainingInPhase)} দিন পর চালু হবে`;
+                } else {
+                    badgeClass = daysLeft <= 5 ? 'badge-danger' : 'badge-good';
+                    statusText = `চলবে আর ${toBengaliNumeral(daysLeft)} ডোজ-দিন`;
+                }
             } else if (daysLeft <= 3) {
                 badgeClass = 'badge-danger';
                 statusText = `জরুরি! চলবে মাত্র ${toBengaliNumeral(daysLeft)} দিন`;
@@ -1469,62 +2866,112 @@
                 statusText = `স্টক কম! চলবে ${toBengaliNumeral(daysLeft)} দিন`;
             }
 
-            let cardStateClass = '';
+            let cardStateClass = isSos ? 'sos-card'
+                : (isTherapy ? 'therapy-card'
+                : (isVaccine ? 'vaccine-card'
+                : (isOxygen ? 'oxygen-card'
+                : (isCycle ? (cycleStatus.isOnPhase ? 'cycle-card' : 'cycle-card cycle-rest') : ''))));
+
             if (isArchiveView) {
                 cardStateClass = running ? 'archive-running' : 'archive-inactive';
-            } else if (daysLeft <= 7) {
-                cardStateClass = 'low-stock';
+            } else if (!isNonStockMode(med.freqType) && daysLeft <= 7) {
+                cardStateClass += ' low-stock';
+            } else if ((isInhaler && liveStock <= 1) || (isSos && !isInhaler && liveStock <= 4)) {
+                cardStateClass += ' low-stock';
             }
 
-            const archiveStatusBadge = isArchiveView
-                ? `<span class="status-tag ${running ? 'tag-running' : 'tag-stopped'}">${running ? '● চলমান (Running)' : '○ বন্ধ / মেয়াদোত্তীর্ণ'}</span>`
-                : '';
+            const topStatusTag = isArchiveView
+                ? `<span class="status-tag ${running ? 'tag-running' : 'tag-stopped'}">${running ? '● চলমান' : '○ বন্ধ'}</span>`
+                : (isCycle ? `<span class="status-tag tag-priority"><i class="fa-solid fa-star"></i> সাইকেল অগ্রাধিকার</span>` : `<span class="drag-hint"><i class="fa-solid fa-grip-vertical"></i> ড্র্যাগ করে সাজান</span>`);
 
             const autoDeductNote = consumedSinceUpdate > 0
                 ? `<div class="consumed-info"><span><i class="fa-solid fa-clock-rotate-left"></i> অটো বাদ গেছে:</span><strong>${toBengaliNumeral(consumedSinceUpdate)} টি</strong></div>`
                 : '';
 
-            // Action Buttons: In main view -> Edit + Remove (moves to archive); In archive view -> Restore/Permanent Delete
-            let actionButtonsHtml = '';
+            let leftActionBtn = '<div></div>';
+            if (running && !isArchiveView) {
+                if (isTherapy) {
+                    leftActionBtn = `
+                        <button class="btn-take-sos therapy-btn" onclick="completeTherapySession(${med.id})">
+                            <i class="fa-solid fa-check-circle"></i> সেশন সম্পন্ন
+                        </button>`;
+                } else if (isVaccine) {
+                    leftActionBtn = `
+                        <button class="btn-take-sos vaccine-btn" onclick="completeVaccineDose(${med.id})">
+                            <i class="fa-solid fa-syringe"></i> ডোজ দেওয়া হয়েছে
+                        </button>`;
+                } else if (isSos) {
+                    if (isInhaler) {
+                        leftActionBtn = `
+                            <button class="btn-take-sos" onclick="consumeSosDose(${med.id}, 1)">
+                                <i class="fa-solid fa-minus-circle"></i> ১টি ইনহেলার শেষ
+                            </button>`;
+                    } else {
+                        leftActionBtn = `
+                            <div class="sos-btn-group">
+                                <button class="btn-take-sos" onclick="consumeSosDose(${med.id}, 1)">- ১ টি</button>
+                                <button class="btn-take-sos secondary" onclick="consumeSosDose(${med.id}, 2)">- ২ টি</button>
+                            </div>`;
+                    }
+                }
+            }
+
+            let rightButtonsHtml = '';
             if (!isArchiveView) {
-                actionButtonsHtml = `
-                    <button class="btn-icon" onclick="editMedicine(${med.id})" title="সম্পাদনা করুন">
-                        <i class="fa-solid fa-pen-to-square"></i> এডিট
-                    </button>
-                    <button class="btn-icon remove" onclick="moveToArchive(${med.id})" title="রিমুভ করে আর্কাইভে পাঠান">
-                        <i class="fa-solid fa-trash-arrow-up"></i> রিমুভ
-                    </button>
-                `;
-            } else {
-                actionButtonsHtml = med.isArchived
-                    ? `
-                        <button class="btn-icon restore" onclick="restoreFromArchive(${med.id})" title="পুনরায় চালু করুন">
-                            <i class="fa-solid fa-rotate-left"></i> ফিরিয়ে আনুন
-                        </button>
-                        <button class="btn-icon remove" onclick="permanentDeleteMedicine(${med.id})" title="স্থায়ীভাবে মুছুন">
-                            <i class="fa-solid fa-trash"></i>
-                        </button>
-                      `
-                    : `
-                        <button class="btn-icon" onclick="editMedicine(${med.id})">
+                rightButtonsHtml = `
+                    <div style="display:flex; gap:5px;">
+                        <button class="btn-icon" onclick="editMedicine(${med.id})" title="সম্পাদনা করুন">
                             <i class="fa-solid fa-pen-to-square"></i> এডিট
                         </button>
-                        <button class="btn-icon remove" onclick="moveToArchive(${med.id})">
-                            <i class="fa-solid fa-box-archive"></i> বন্ধ করুন
+                        <button class="btn-icon remove" onclick="moveToArchive(${med.id})" title="রিমুভ করে আর্কাইভে পাঠান">
+                            <i class="fa-solid fa-trash-arrow-up"></i> রিমুভ
                         </button>
+                    </div>
+                `;
+            } else {
+                rightButtonsHtml = med.isArchived
+                    ? `
+                        <div style="display:flex; gap:5px;">
+                            <button class="btn-icon restore" onclick="restoreFromArchive(${med.id})" title="পুনরায় চালু করুন">
+                                <i class="fa-solid fa-rotate-left"></i> ফিরিয়ে আনুন
+                            </button>
+                            <button class="btn-icon remove" onclick="permanentDeleteMedicine(${med.id})" title="স্থায়ীভাবে মুছুন">
+                                <i class="fa-solid fa-trash"></i>
+                            </button>
+                        </div>
+                      `
+                    : `
+                        <div style="display:flex; gap:5px;">
+                            <button class="btn-icon" onclick="editMedicine(${med.id})">
+                                <i class="fa-solid fa-pen-to-square"></i> এডিট
+                            </button>
+                            <button class="btn-icon remove" onclick="moveToArchive(${med.id})">
+                                <i class="fa-solid fa-box-archive"></i> বন্ধ করুন
+                            </button>
+                        </div>
                       `;
             }
 
             const cardHtml = `
-                <div class="med-card ${cardStateClass}">
-                    ${archiveStatusBadge}
+                <div class="med-card ${cardStateClass}"
+                     draggable="true"
+                     ondragstart="handleDragStart(event, ${med.id})"
+                     ondragover="handleDragOver(event)"
+                     ondragleave="handleDragLeave(event)"
+                     ondrop="handleDrop(event, ${med.id})"
+                     ondragend="handleDragEnd(event)">
+
+                    <div class="card-reorder-bar">
+                        ${topStatusTag}
+                    </div>
+
                     <div class="med-header">
                         <div class="med-title">${escapeHtml(med.name)}</div>
-                        <div class="prescription-badge">${dosePattern}</div>
+                        <div class="prescription-badge ${badgeExtraClass}">${dosePattern}</div>
                     </div>
 
                     <div class="med-dates">
-                        <span><i class="fa-regular fa-calendar-check"></i> শুরু: ${formatDate(med.startDate)}</span>
+                        <span><i class="fa-regular fa-calendar-check"></i> শুরু: ${formatDate(med.cycleStartDate || med.startDate)}</span>
                         <span><i class="fa-regular fa-calendar"></i> শেষ: ${endDateText}</span>
                     </div>
 
@@ -1534,14 +2981,15 @@
                         ${statRowHtml}
                     </div>
 
-                    ${med.note ? `<div style="font-size:0.8rem; color:var(--text-muted); margin-bottom: 5px;"><i class="fa-solid fa-info-circle"></i> ${escapeHtml(med.note)}</div>` : ''}
+                    ${med.note ? `<div style="font-size:0.81rem; color:var(--text-muted); margin-bottom: 5px;"><i class="fa-solid fa-info-circle"></i> ${escapeHtml(med.note)}</div>` : ''}
 
                     <div class="days-badge ${badgeClass}">
                         ${statusText}
                     </div>
 
                     <div class="card-actions">
-                        ${actionButtonsHtml}
+                        ${leftActionBtn}
+                        ${rightButtonsHtml}
                     </div>
                 </div>
             `;
@@ -1550,24 +2998,50 @@
     }
 
     function editMedicine(id) {
-        const med = appData.medicines.find(m => m.id === id);
+        const prof = getActiveProfile();
+        const med = prof.medicines.find(m => m.id === id);
         if (!med) return;
 
         const { liveStock } = calculateLiveStock(med);
 
         document.getElementById('medId').value = med.id;
         document.getElementById('medName').value = med.name;
-        
+
+        const radio = document.querySelector(`input[name="freqType"][value="${med.freqType}"]`);
+        if (radio) radio.checked = true;
+        toggleFreqMode(med.freqType);
+
         if (med.freqType === 'weekly') {
-            document.querySelector('input[name="freqType"][value="weekly"]').checked = true;
-            toggleFreqMode('weekly');
             document.querySelectorAll('.week-day-input').forEach(cb => {
                 cb.checked = med.selectedWeekDays ? med.selectedWeekDays.includes(cb.value) : false;
             });
             document.getElementById('weeklySingleDose').value = med.weeklySingleDose || 1;
+            document.getElementById('weeklyTimeSlot').value = med.weeklyTimeSlot || 'সকাল';
+        } else if (med.freqType === 'sos') {
+            const subType = med.sosSubType || 'piece';
+            const subRadio = document.querySelector(`input[name="sosSubType"][value="${subType}"]`);
+            if (subRadio) subRadio.checked = true;
+            updateStockLabel();
+        } else if (med.freqType === 'cycle') {
+            document.getElementById('cycleDays').value = med.cycleDays || 28;
+            document.getElementById('cycleStartDate').value = med.cycleStartDate || med.startDate;
+            document.getElementById('doseMorning').value = med.doses ? med.doses.m : 0;
+            document.getElementById('doseNoon').value = med.doses ? med.doses.n : 0;
+            document.getElementById('doseNight').value = med.doses ? med.doses.nt : 0;
+        } else if (med.freqType === 'therapy') {
+            document.getElementById('therapyIntervalDays').value = med.therapyIntervalDays || 7;
+            document.getElementById('therapyTotalSessions').value = med.therapyTotalSessions || 16;
+            document.getElementById('therapyCompletedSessions').value = med.therapyCompletedSessions || 0;
+            document.getElementById('therapyLastDate').value = med.therapyLastDate || med.startDate;
+        } else if (med.freqType === 'vaccine') {
+            document.getElementById('vaccineIntervalDays').value = med.vaccineIntervalDays || 180;
+            document.getElementById('vaccineTotalDoses').value = med.vaccineTotalDoses || 6;
+            document.getElementById('vaccineCompletedDoses').value = med.vaccineCompletedDoses || 1;
+            document.getElementById('vaccineLastDate').value = med.vaccineLastDate || med.startDate;
+        } else if (med.freqType === 'oxygen') {
+            document.getElementById('oxygenDailyHours').value = med.oxygenDailyHours || 18;
+            document.getElementById('oxygenFlowRate').value = med.oxygenFlowRate || '2-4 L/min';
         } else {
-            document.querySelector('input[name="freqType"][value="daily"]').checked = true;
-            toggleFreqMode('daily');
             document.getElementById('doseMorning').value = med.doses ? med.doses.m : 0;
             document.getElementById('doseNoon').value = med.doses ? med.doses.n : 0;
             document.getElementById('doseNight').value = med.doses ? med.doses.nt : 0;
@@ -1584,7 +3058,9 @@
             }
         }
 
-        document.getElementById('currentStock').value = liveStock;
+        if (!isNonStockMode(med.freqType)) {
+            document.getElementById('currentStock').value = liveStock;
+        }
         document.getElementById('startDateSelect').value = med.startDate;
 
         const durationModeInput = document.getElementById('durationMode');
@@ -1606,7 +3082,7 @@
         document.getElementById('note').value = med.note || '';
         document.getElementById('submitBtn').innerHTML = '<i class="fa-solid fa-pen"></i> আপডেট করুন';
         document.getElementById('cancelEditBtn').style.display = 'block';
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+        document.querySelector('.sidebar')?.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
     function toggleLowStockFilter() {
@@ -1646,15 +3122,15 @@
             targetDaysForPeriod = daysRemainingInCurrMonth + next1MonthDays + next2MonthDays;
         }
 
-        const activeMeds = appData.medicines.filter(m => isMedicineRunning(m));
+        const activeMeds = getOrderedMedicines().filter(m => isMedicineRunning(m) && !['therapy', 'oxygen'].includes(m.freqType));
 
         let html = `
             <table class="shopping-table">
                 <thead>
                     <tr>
-                        <th>ওষুধের নাম</th>
+                        <th>ওষুধ / ভ্যাকসিনের নাম</th>
                         <th>বর্তমান স্টক</th>
-                        <th>নির্ধারিত সময়ের সেবন</th>
+                        <th>নির্ধারিত সময়ের চাহিদা</th>
                         <th>কিনতে হবে</th>
                     </tr>
                 </thead>
@@ -1663,9 +3139,36 @@
 
         activeMeds.forEach(med => {
             const { liveStock } = calculateLiveStock(med);
-            let activeDaysInPeriod = targetDaysForPeriod;
+            if (med.freqType === 'vaccine') {
+                const nextDateStr = addDays(med.vaccineLastDate || med.startDate, med.vaccineIntervalDays || 180);
+                html += `
+                    <tr>
+                        <td><strong>${escapeHtml(med.name)}</strong></td>
+                        <td>স্টক প্রযোজ্য নয়</td>
+                        <td>পরবর্তী ডোজ: ${formatDate(nextDateStr)}</td>
+                        <td style="color:#be123c; font-weight:700;">ডোজের সময় ১টি কিনবেন</td>
+                    </tr>
+                `;
+                return;
+            }
+            if (med.freqType === 'sos') {
+                const isInhaler = med.sosSubType === 'inhaler';
+                const low = isInhaler ? liveStock <= 1 : liveStock <= 4;
+                html += `
+                    <tr>
+                        <td><strong>${escapeHtml(med.name)}</strong></td>
+                        <td>${toBengaliNumeral(liveStock)} ${isInhaler ? 'টি ইনহেলার' : 'টি'}</td>
+                        <td>প্রয়োজন মতো (SOS)</td>
+                        <td style="color:${low ? 'var(--danger-color)' : '#7e22ce'}; font-weight:700;">
+                            ${low ? 'স্টক কম (কিনতে হবে)' : 'প্রয়োজন অনুযায়ী'}
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
 
-            if (!med.isContinuous) {
+            let activeDaysInPeriod = targetDaysForPeriod;
+            if (!med.isContinuous && med.freqType !== 'cycle') {
                 const endDateStr = addDays(med.startDate, med.targetDays);
                 const endDateObj = new Date(endDateStr);
                 const remainingCourseDays = Math.max(0, Math.ceil((endDateObj - today) / (1000 * 60 * 60 * 24)));
@@ -1679,7 +3182,7 @@
                 <tr>
                     <td><strong>${escapeHtml(med.name)}</strong></td>
                     <td>${toBengaliNumeral(liveStock)} টি</td>
-                    <td>${toBengaliNumeral(neededTotal)} টি ${activeDaysInPeriod < targetDaysForPeriod ? '(কোর্স অনুযায়ী)' : ''}</td>
+                    <td>${toBengaliNumeral(neededTotal)} টি ${med.freqType === 'cycle' ? '(সাইকেল অনুযায়ী)' : (activeDaysInPeriod < targetDaysForPeriod ? '(কোর্স অনুযায়ী)' : '')}</td>
                     <td style="color:${buyQty > 0 ? 'var(--danger-color)' : 'var(--success-color)'}; font-weight:700;">
                         ${buyQty > 0 ? toBengaliNumeral(Math.ceil(buyQty)) + ' টি' : 'প্রয়োজন নেই'}
                     </td>
@@ -1693,6 +3196,637 @@
             : html;
     }
 
+    // =========================================================================
+    // VERIFIED MULTI-ENGINE AI PRESCRIPTION SCANNER + SMART RECONCILIATION
+    // =========================================================================
+    function switchScannerTab(tab) {
+        document.getElementById('tabBtnImage').classList.toggle('active', tab === 'image');
+        document.getElementById('tabBtnJson').classList.toggle('active', tab === 'json');
+        document.getElementById('scannerTabImage').style.display = tab === 'image' ? 'block' : 'none';
+        document.getElementById('scannerTabJson').style.display = tab === 'json' ? 'block' : 'none';
+    }
+
+    function openAiScannerModal() {
+        document.getElementById('aiScannerModal').style.display = 'flex';
+        document.getElementById('geminiApiKeyInput').value = storeData.geminiApiKey || localStorage.getItem('amma_gemini_api_key') || '';
+        document.getElementById('groqApiKeyInput').value = storeData.groqApiKey || localStorage.getItem('amma_groq_api_key') || '';
+    }
+
+    function closeAiScannerModal() {
+        document.getElementById('aiScannerModal').style.display = 'none';
+    }
+
+    function saveApiKeys() {
+        const gKey = document.getElementById('geminiApiKeyInput').value.trim();
+        const grKey = document.getElementById('groqApiKeyInput').value.trim();
+        if (gKey) {
+            localStorage.setItem('amma_gemini_api_key', gKey);
+            storeData.geminiApiKey = gKey;
+        }
+        if (grKey) {
+            localStorage.setItem('amma_groq_api_key', grKey);
+            storeData.groqApiKey = grKey;
+        }
+        saveAppData(false);
+        alert('API Keys সফলভাবে ক্লাউডে সেভ হয়েছে!');
+    }
+
+    function compressImageToBase64(file, maxDim = 1500) {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const img = new Image();
+                img.onload = () => {
+                    let w = img.width;
+                    let h = img.height;
+                    if (w > maxDim || h > maxDim) {
+                        if (w > h) {
+                            h = Math.round((h * maxDim) / w);
+                            w = maxDim;
+                        } else {
+                            w = Math.round((w * maxDim) / h);
+                            h = maxDim;
+                        }
+                    }
+                    const canvas = document.createElement('canvas');
+                    canvas.width = w;
+                    canvas.height = h;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, w, h);
+                    resolve(canvas.toDataURL('image/jpeg', 0.88).split(',')[1]);
+                };
+                img.onerror = reject;
+                img.src = e.target.result;
+            };
+            reader.onerror = reject;
+            reader.readAsDataURL(file);
+        });
+    }
+
+    const PRESCRIPTION_PROMPT = `You are an expert medical prescription parser. Analyze this prescription image and extract patient metadata, visit details, and all prescribed items in strict JSON format.
+Return ONLY a valid JSON object (no markdown fences, no commentary) with this exact schema:
+{
+  "patientName": "Patient's exact full name as written at the top of the prescription (or empty string if not on this page)",
+  "visitName": "ONLY the Visit Number (e.g., Visit No: 7) or Doctor name if visit number is absent (or empty string if not on this page)",
+  "visitDate": "YYYY-MM-DD format converted from DD/MM/YYYY if visible on this page (or empty string if not visible on this page)",
+  "medicines": [
+    {
+      "rxSerial": 1,
+      "name": "Exact item name with strength and form (e.g., Tablet. Doxoven 200 mg)",
+      "freqType": "daily" | "weekly" | "cycle" | "sos" | "therapy" | "vaccine" | "oxygen",
+      "sosSubType": "inhaler" | "piece",
+      "cycleDays": 28,
+      "therapyIntervalDays": 7,
+      "therapyTotalSessions": 16,
+      "vaccineIntervalDays": 180,
+      "vaccineTotalDoses": 6,
+      "oxygenDailyHours": 18,
+      "oxygenFlowRate": "2-4 L/min",
+      "selectedWeekDays": ["fri"],
+      "weeklySingleDose": 1,
+      "weeklyTimeSlot": "দুপুর",
+      "doses": { "m": 1, "n": 0, "nt": 1 },
+      "targetDays": 30,
+      "isContinuous": false,
+      "note": "Short instruction in Bengali"
+    }
+  ]
+}
+Classification Rules:
+- Keep exact serial number ("rxSerial") as numbered on the prescription (1, 2, 3... 25).
+- "therapy": Rehab / vest sessions or periodic nebulization sessions (e.g. PA-PRP 14 দিন পরপর ৬ বার).
+- "vaccine": Injections / vaccines given periodically or fixed doses (e.g., Injection Denosis 60 ৬ মাস পরপর মোট ৬ টা, or I.v. inj. Ultrapime).
+- "oxygen": Oxygen inhalation therapy (default oxygenDailyHours=18).
+- "cycle": Medicines taken X days on and X days off (e.g., Tobicine 300: 28 দিন পরপর -> cycleDays=28).
+- "weekly": Medicines taken specific days of week (e.g., Osteo D 20000 প্রতি শুক্রবার দুপুরে -> freqType="weekly", selectedWeekDays=["fri"], weeklyTimeSlot="দুপুর").
+- "sos": Inhalers or medicines taken as needed (প্রয়োজন মতো).`;
+
+    async function getVerifiedGeminiModels(apiKey) {
+        try {
+            const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models?key=${encodeURIComponent(apiKey)}`);
+            const data = await res.json();
+            if (data && Array.isArray(data.models)) {
+                const valid = data.models
+                    .filter(m => m.supportedGenerationMethods && m.supportedGenerationMethods.includes('generateContent'))
+                    .map(m => m.name.replace('models/', ''))
+                    .filter(name =>
+                        (name.includes('flash') || name.includes('pro')) &&
+                        !name.includes('embedding') &&
+                        !name.includes('tts') &&
+                        !name.includes('image-generation') &&
+                        !name.includes('lite')
+                    );
+
+                valid.sort((a, b) => b.localeCompare(a, undefined, { numeric: true }));
+                if (valid.length > 0) return valid;
+            }
+        } catch (e) {
+            console.warn('Gemini model discovery failed:', e);
+        }
+        return ['gemini-2.5-flash', 'gemini-2.0-flash'];
+    }
+
+    async function getVerifiedGroqVisionModels(groqKey) {
+        try {
+            const res = await fetch('https://api.groq.com/openai/v1/models', {
+                headers: { 'Authorization': `Bearer ${groqKey}` }
+            });
+            const data = await res.json();
+            if (data && Array.isArray(data.data)) {
+                const activeIds = data.data.map(m => m.id);
+                return activeIds.filter(id =>
+                    id.includes('vision') ||
+                    id.includes('llama-4-scout') ||
+                    id.includes('llama-4-maverick')
+                );
+            }
+        } catch (e) {
+            console.warn('Groq model discovery failed:', e);
+        }
+        return [];
+    }
+
+    async function analyzeSingleImageWithRetry(base64Data, geminiKey, groqKey, statusCallback) {
+        const MAX_ATTEMPTS_PER_MODEL = 2;
+        let lastError = 'কোনো AI মডেল থেকে রেসপন্স পাওয়া যায়নি';
+
+        if (geminiKey) {
+            const geminiModels = await getVerifiedGeminiModels(geminiKey);
+            for (const modelName of geminiModels) {
+                for (let attempt = 1; attempt <= MAX_ATTEMPTS_PER_MODEL; attempt++) {
+                    try {
+                        statusCallback(`${modelName} বিশ্লেষণ করছে${attempt > 1 ? ' (২য় চেষ্টা)...' : '...'}`);
+                        const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${encodeURIComponent(geminiKey)}`, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                contents: [{
+                                    parts: [
+                                        { text: PRESCRIPTION_PROMPT },
+                                        { inline_data: { mime_type: 'image/jpeg', data: base64Data } }
+                                    ]
+                                }]
+                            })
+                        });
+
+                        const data = await res.json();
+                        if (!data.error) {
+                            let rawText = data.candidates?.[0]?.content?.parts?.[0]?.text || '{}';
+                            rawText = rawText.replace(/```json/gi, '').replace(/```/g, '').trim();
+                            return JSON.parse(rawText);
+                        }
+
+                        lastError = data.error.message || 'Gemini Error';
+                        if (res.status === 404 || lastError.toLowerCase().includes('no longer available') || lastError.toLowerCase().includes('not found')) {
+                            break;
+                        }
+
+                        const isBusy = res.status === 503 || res.status === 429
+                            || lastError.toLowerCase().includes('demand')
+                            || lastError.toLowerCase().includes('overloaded');
+
+                        if (isBusy && attempt < MAX_ATTEMPTS_PER_MODEL) {
+                            continue;
+                        } else {
+                            break;
+                        }
+                    } catch (err) {
+                        lastError = err.message;
+                        if (attempt >= MAX_ATTEMPTS_PER_MODEL) break;
+                    }
+                }
+            }
+        }
+
+        if (groqKey) {
+            const groqModels = await getVerifiedGroqVisionModels(groqKey);
+            for (const gModel of groqModels) {
+                for (let attempt = 1; attempt <= MAX_ATTEMPTS_PER_MODEL; attempt++) {
+                    try {
+                        const shortName = gModel.split('/')[1] || gModel;
+                        statusCallback(`Groq (${shortName}) বিশ্লেষণ করছে${attempt > 1 ? ' (২য় চেষ্টা)...' : '...'}`);
+                        const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'Authorization': `Bearer ${groqKey}`
+                            },
+                            body: JSON.stringify({
+                                model: gModel,
+                                temperature: 0.1,
+                                messages: [{
+                                    role: 'user',
+                                    content: [
+                                        { type: 'text', text: PRESCRIPTION_PROMPT },
+                                        { type: 'image_url', image_url: { url: `data:image/jpeg;base64,${base64Data}` } }
+                                    ]
+                                }]
+                            })
+                        });
+
+                        const data = await res.json();
+                        if (!data.error) {
+                            let rawText = data.choices?.[0]?.message?.content || '{}';
+                            rawText = rawText.replace(/```json/gi, '').replace(/```/g, '').trim();
+                            return JSON.parse(rawText);
+                        }
+                        lastError = data.error.message || 'Groq Error';
+                        break;
+                    } catch (err) {
+                        lastError = err.message;
+                        break;
+                    }
+                }
+            }
+        }
+
+        throw new Error(lastError);
+    }
+
+    // Strict canonical normalization so "Tablet. Coralex DX" and "Tab. Coralex DX" NEVER duplicate
+    function normalizeMedKey(name) {
+        return (name || '')
+            .toLowerCase()
+            .replace(/^(tab\.?|tablet\.?|cap\.?|capsule\.?|syp\.?|syrup\.?|inj\.?|i\.v\.\s*inj\.?|injection\.?|inhaler\.?|inhalar\.?|inhalation\.?|nebules\.?|nebule\.?|nebulize\.?|nebulization\.?|rotacap\.?|rahab\.?|rehab\.?|drop\.?|drops\.?)\s*/gi, '')
+            .replace(/[^a-z0-9\u0980-\u09FF]/g, '');
+    }
+
+    async function handlePrescriptionBatchUpload(event) {
+        const files = Array.from(event.target.files || []);
+        if (files.length === 0) return;
+
+        const geminiKey = document.getElementById('geminiApiKeyInput').value.trim() || storeData.geminiApiKey || localStorage.getItem('amma_gemini_api_key') || '';
+        const groqKey = document.getElementById('groqApiKeyInput').value.trim() || storeData.groqApiKey || localStorage.getItem('amma_groq_api_key') || '';
+
+        if (!geminiKey && !groqKey) {
+            alert('প্রথমে উপরে তোমার Gemini API Key (অথবা Groq API Key) পেস্ট করে সেভ করো।');
+            event.target.value = '';
+            return;
+        }
+
+        if (geminiKey) { localStorage.setItem('amma_gemini_api_key', geminiKey); storeData.geminiApiKey = geminiKey; }
+        if (groqKey) { localStorage.setItem('amma_groq_api_key', groqKey); storeData.groqApiKey = groqKey; }
+        saveAppData(false);
+
+        const loadingEl = document.getElementById('aiScanLoading');
+        const statusEl = document.getElementById('aiScanStatusText');
+        loadingEl.style.display = 'block';
+        document.getElementById('aiDetectedContainer').style.display = 'none';
+
+        stagedBatch = { patientName: '', visitName: '', visitDate: '', medicines: [] };
+
+        try {
+            // Parse all pages first, then unify session metadata across pages
+            const pageResults = [];
+            for (let i = 0; i < files.length; i++) {
+                const base64Data = await compressImageToBase64(files[i]);
+                const parsed = await analyzeSingleImageWithRetry(base64Data, geminiKey, groqKey, (msg) => {
+                    statusEl.textContent = `ছবি ${toBengaliNumeral(i + 1)}/${toBengaliNumeral(files.length)}: ${msg}`;
+                });
+                pageResults.push(parsed);
+            }
+
+            // Unify patientName, visitName, and visitDate from whichever page has them (prevents 2nd page creating fake today date)
+            for (const p of pageResults) {
+                if (p.patientName && p.patientName.trim()) stagedBatch.patientName = p.patientName.trim();
+                if (p.visitDate && /^\d{4}-\d{2}-\d{2}$/.test(p.visitDate.trim())) stagedBatch.visitDate = p.visitDate.trim();
+                if (p.visitName && p.visitName.trim() && !p.visitName.toLowerCase().includes('prof.') && !p.visitName.toLowerCase().includes('dr.')) {
+                    stagedBatch.visitName = p.visitName.trim();
+                }
+            }
+            if (!stagedBatch.visitName) {
+                const fallbackName = pageResults.find(p => p.visitName)?.visitName;
+                stagedBatch.visitName = fallbackName ? fallbackName.trim() : `Visit No: ${getActiveProfile().visits.length + 1}`;
+            }
+            if (!stagedBatch.visitDate) {
+                stagedBatch.visitDate = new Date().toISOString().split('T')[0];
+            }
+
+            pageResults.forEach(p => mergeParsedPageIntoStagedBatch(p));
+            renderStagedBatchPreview();
+        } catch (err) {
+            console.error("Batch scan error:", err);
+            alert('স্ক্যান করতে সমস্যা হয়েছে: ' + err.message);
+        } finally {
+            loadingEl.style.display = 'none';
+            event.target.value = '';
+        }
+    }
+
+    function parseBulkJsonInput() {
+        const raw = document.getElementById('bulkJsonInput').value.trim();
+        if (!raw) {
+            alert('অনুগ্রহ করে JSON কোড পেস্ট করুন।');
+            return;
+        }
+        try {
+            const cleaned = raw.replace(/```json/gi, '').replace(/```/g, '').trim();
+            const parsed = JSON.parse(cleaned);
+            stagedBatch = { patientName: '', visitName: '', visitDate: '', medicines: [] };
+
+            const items = Array.isArray(parsed) ? parsed : [parsed];
+            for (const p of items) {
+                if (p.patientName) stagedBatch.patientName = p.patientName.trim();
+                if (p.visitDate) stagedBatch.visitDate = p.visitDate.trim();
+                if (p.visitName) stagedBatch.visitName = p.visitName.trim();
+            }
+            if (!stagedBatch.visitDate) stagedBatch.visitDate = new Date().toISOString().split('T')[0];
+            if (!stagedBatch.visitName) stagedBatch.visitName = `Visit No: ${getActiveProfile().visits.length + 1}`;
+
+            items.forEach(item => {
+                if (item.medicines) {
+                    mergeParsedPageIntoStagedBatch(item);
+                } else {
+                    mergeParsedPageIntoStagedBatch({ medicines: [item] });
+                }
+            });
+
+            renderStagedBatchPreview();
+        } catch (err) {
+            alert('সঠিক JSON ফরম্যাট দিন: ' + err.message);
+        }
+    }
+
+    function mergeParsedPageIntoStagedBatch(parsed) {
+        const sessionDate = stagedBatch.visitDate;
+        const sessionName = stagedBatch.visitName;
+
+        (parsed.medicines || []).forEach(med => {
+            if (!med || !med.name) return;
+            const normKey = normalizeMedKey(med.name);
+            const existingIdx = stagedBatch.medicines.findIndex(m => normalizeMedKey(m.name) === normKey);
+
+            const enriched = {
+                ...med,
+                visitDate: sessionDate,
+                visitName: sessionName
+            };
+
+            if (existingIdx !== -1) {
+                stagedBatch.medicines[existingIdx] = enriched;
+            } else {
+                stagedBatch.medicines.push(enriched);
+            }
+        });
+    }
+
+    function renderStagedBatchPreview() {
+        const listEl = document.getElementById('aiDetectedList');
+        listEl.innerHTML = '';
+
+        if (stagedBatch.medicines.length === 0) {
+            alert('কোনো ওষুধ শনাক্ত করা যায়নি।');
+            return;
+        }
+
+        // Sort preview by prescription serial number
+        stagedBatch.medicines.sort((a, b) => (a.rxSerial || 999) - (b.rxSerial || 999));
+
+        const currentActiveProf = getActiveProfile();
+        const detectedName = stagedBatch.patientName || currentActiveProf.name || 'আম্মু';
+        document.getElementById('metaPatientNameInput').value = detectedName;
+        document.getElementById('metaVisitNameInput').value = stagedBatch.visitName;
+        document.getElementById('metaVisitDateInput').value = stagedBatch.visitDate;
+
+        const targetProfKey = normalizeProfileKey(detectedName);
+        const existingProf = Object.values(storeData.profiles).find(p => normalizeProfileKey(p.name) === targetProfKey) || currentActiveProf;
+
+        stagedBatch.medicines.forEach((med, idx) => {
+            const normKey = normalizeMedKey(med.name);
+            const existingAppMed = existingProf.medicines.find(m => normalizeMedKey(m.name) === normKey);
+            const fType = med.freqType || 'daily';
+
+            let doseLabel = '';
+            if (fType === 'therapy') {
+                doseLabel = `থেরাপি (${toBengaliNumeral(med.therapyIntervalDays || 7)} দিন পরপর • ${toBengaliNumeral(med.therapyTotalSessions || 16)} সেশন)`;
+            } else if (fType === 'vaccine') {
+                doseLabel = `ভ্যাকসিন/ইনজেকশন (${toBengaliNumeral(med.vaccineIntervalDays || 180)} দিন পরপর)`;
+            } else if (fType === 'oxygen') {
+                doseLabel = `অক্সিজেন (দৈনিক ${toBengaliNumeral(med.oxygenDailyHours || 18)} ঘণ্টা)`;
+            } else if (fType === 'sos') {
+                doseLabel = med.sosSubType === 'inhaler' ? 'ইনহেলার (SOS)' : 'প্রয়োজন মতো (SOS)';
+            } else if (fType === 'cycle') {
+                doseLabel = `${formatDoseVal(med.doses?.m || 0)}+${formatDoseVal(med.doses?.n || 0)}+${formatDoseVal(med.doses?.nt || 0)} (${med.cycleDays || 28} দিন সাইকেল)`;
+            } else {
+                doseLabel = `${formatDoseVal(med.doses?.m || 0)}+${formatDoseVal(med.doses?.n || 0)}+${formatDoseVal(med.doses?.nt || 0)} (${med.isContinuous ? 'চলবে' : (med.targetDays + ' দিন')})`;
+            }
+
+            const statusTag = existingAppMed
+                ? `<span class="badge-action-update"><i class="fa-solid fa-rotate"></i> আগের এন্ট্রি আপডেট হবে</span>`
+                : `<span class="badge-action-new"><i class="fa-solid fa-plus"></i> নতুন যুক্ত হবে</span>`;
+
+            const noStockNeeded = isNonStockMode(fType);
+            const existingStockVal = existingAppMed ? calculateLiveStock(existingAppMed).liveStock : 0;
+            const defaultStock = existingStockVal > 0 ? existingStockVal : '';
+
+            const stockColumnHtml = noStockNeeded
+                ? `<div style="font-size:0.78rem; color:#64748b; text-align:center; background:#f1f5f9; padding:7px; border-radius:7px; font-weight:600;">স্টক প্রযোজ্য নয়</div>`
+                : `<div>
+                        <label style="font-size:0.72rem; color:#64748b; margin-bottom:2px;">ঘরে কয়টি আছে?</label>
+                        <input type="number" class="form-control" id="aiStock_${idx}" step="0.5" min="0" placeholder="0" value="${defaultStock}">
+                   </div>`;
+
+            listEl.insertAdjacentHTML('beforeend', `
+                <div class="ai-detected-item" id="aiItem_${idx}">
+                    <div>
+                        <input type="text" class="form-control" id="aiName_${idx}" value="${escapeHtml(med.name)}" style="font-weight:700;">
+                        <small style="color:#64748b; display:block;">${escapeHtml(med.note || '')}</small>
+                        ${statusTag}
+                    </div>
+                    <div style="font-size:0.83rem; font-weight:700; color:#4f46e5; background:#eef2ff; padding:6px 8px; border-radius:7px; text-align:center;">
+                        ${doseLabel}
+                    </div>
+                    ${stockColumnHtml}
+                    <button type="button" onclick="removeAiItem(${idx})" style="background:none; border:none; color:#e74c3c; cursor:pointer; font-size:1rem;" title="বাদ দিন">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
+            `);
+        });
+
+        document.getElementById('aiDetectedContainer').style.display = 'block';
+    }
+
+    function removeAiItem(idx) {
+        stagedBatch.medicines[idx] = null;
+        const el = document.getElementById(`aiItem_${idx}`);
+        if (el) el.remove();
+    }
+
+    // Smart Reconciliation: Prevents duplicates, updates existing items in-place, saves single clean visit
+    function confirmAndReconcileMedicines() {
+        const finalPatientName = document.getElementById('metaPatientNameInput').value.trim() || getActiveProfile().name || 'আম্মু';
+        const finalVisitName = document.getElementById('metaVisitNameInput').value.trim() || stagedBatch.visitName || 'Visit';
+        const finalVisitDate = document.getElementById('metaVisitDateInput').value || stagedBatch.visitDate || new Date().toISOString().split('T')[0];
+
+        const targetProfKey = normalizeProfileKey(finalPatientName);
+        let targetProfile = Object.values(storeData.profiles).find(p => normalizeProfileKey(p.name) === targetProfKey);
+
+        if (!targetProfile) {
+            const currentProf = getActiveProfile();
+            if (currentProf.medicines.length === 0 && currentProf.visits.length === 0) {
+                currentProf.name = finalPatientName;
+                targetProfile = currentProf;
+            } else {
+                const newId = 'prof_' + Date.now();
+                targetProfile = {
+                    id: newId,
+                    name: finalPatientName,
+                    visits: [],
+                    medicines: []
+                };
+                storeData.profiles[newId] = targetProfile;
+            }
+        }
+
+        storeData.activeProfileId = targetProfile.id;
+
+        // Deduplicate & save single clean visit entry by date
+        const existingVisitIdx = targetProfile.visits.findIndex(v => v.date === finalVisitDate);
+        if (existingVisitIdx !== -1) {
+            targetProfile.visits[existingVisitIdx].name = finalVisitName;
+        } else {
+            targetProfile.visits.push({
+                id: Date.now(),
+                name: finalVisitName,
+                date: finalVisitDate
+            });
+        }
+
+        const allVisitDates = targetProfile.visits.map(v => v.date).filter(Boolean).sort();
+        const overallLatestVisitDate = allVisitDates.length > 0 ? allVisitDates[allVisitDates.length - 1] : finalVisitDate;
+
+        const latestBatchNormKeys = new Set();
+        let addedCount = 0;
+        let updatedCount = 0;
+
+        stagedBatch.medicines.forEach((med, idx) => {
+            if (!med) return;
+            const nameVal = document.getElementById(`aiName_${idx}`)?.value.trim() || med.name;
+            const fType = med.freqType || 'daily';
+            const stockVal = isNonStockMode(fType) ? 0 : (parseFloat(document.getElementById(`aiStock_${idx}`)?.value) || 0);
+            const doses = med.doses || { m: 0, n: 0, nt: 0 };
+            const dailyQty = isNonStockMode(fType) ? 0 : (doses.m + doses.n + doses.nt);
+            const normKey = normalizeMedKey(nameVal);
+
+            latestBatchNormKeys.add(normKey);
+
+            // Remove any duplicate copies of the same normalized key before updating
+            const matchingIndices = [];
+            targetProfile.medicines.forEach((m, mIdx) => {
+                if (normalizeMedKey(m.name) === normKey) matchingIndices.push(mIdx);
+            });
+
+            if (matchingIndices.length > 0) {
+                const primaryIdx = matchingIndices[0];
+                const existing = targetProfile.medicines[primaryIdx];
+                const earliestStart = (existing.startDate && existing.startDate < finalVisitDate) ? existing.startDate : finalVisitDate;
+
+                // Remove extra duplicates if any existed previously
+                for (let k = matchingIndices.length - 1; k >= 1; k--) {
+                    targetProfile.medicines.splice(matchingIndices[k], 1);
+                }
+
+                targetProfile.medicines[primaryIdx] = {
+                    ...existing,
+                    rxSerial: med.rxSerial || existing.rxSerial || (primaryIdx + 1),
+                    name: nameVal,
+                    freqType: fType,
+                    cycleDays: med.cycleDays || existing.cycleDays || 28,
+                    cycleStartDate: existing.cycleStartDate || earliestStart,
+                    sosSubType: med.sosSubType || existing.sosSubType || 'piece',
+                    therapyIntervalDays: med.therapyIntervalDays || existing.therapyIntervalDays || 7,
+                    therapyTotalSessions: med.therapyTotalSessions || existing.therapyTotalSessions || 16,
+                    therapyCompletedSessions: existing.therapyCompletedSessions || 0,
+                    therapyLastDate: existing.therapyLastDate || finalVisitDate,
+                    vaccineIntervalDays: med.vaccineIntervalDays || existing.vaccineIntervalDays || 180,
+                    vaccineTotalDoses: med.vaccineTotalDoses || existing.vaccineTotalDoses || 6,
+                    vaccineCompletedDoses: existing.vaccineCompletedDoses || 1,
+                    vaccineLastDate: existing.vaccineLastDate || finalVisitDate,
+                    oxygenDailyHours: med.oxygenDailyHours || existing.oxygenDailyHours || 18,
+                    oxygenFlowRate: med.oxygenFlowRate || existing.oxygenFlowRate || '2-4 L/min',
+                    selectedWeekDays: med.selectedWeekDays || existing.selectedWeekDays || [],
+                    weeklySingleDose: med.weeklySingleDose || existing.weeklySingleDose || 1,
+                    weeklyTimeSlot: med.weeklyTimeSlot || existing.weeklyTimeSlot || 'সকাল',
+                    doses,
+                    dailyQty,
+                    currentStock: stockVal,
+                    lastStockUpdated: new Date().toISOString(),
+                    startDate: earliestStart,
+                    isContinuous: med.isContinuous !== undefined ? med.isContinuous : existing.isContinuous,
+                    targetDays: med.targetDays || existing.targetDays || 30,
+                    note: med.note || existing.note || '',
+                    lastSeenVisitDate: finalVisitDate,
+                    isArchived: false
+                };
+                updatedCount++;
+            } else {
+                targetProfile.medicines.push({
+                    id: Date.now() + idx,
+                    rxSerial: med.rxSerial || (targetProfile.medicines.length + 1),
+                    name: nameVal,
+                    freqType: fType,
+                    cycleDays: med.cycleDays || 28,
+                    cycleStartDate: finalVisitDate,
+                    sosSubType: med.sosSubType || 'piece',
+                    therapyIntervalDays: med.therapyIntervalDays || 7,
+                    therapyTotalSessions: med.therapyTotalSessions || 16,
+                    therapyCompletedSessions: 0,
+                    therapyLastDate: finalVisitDate,
+                    vaccineIntervalDays: med.vaccineIntervalDays || 180,
+                    vaccineTotalDoses: med.vaccineTotalDoses || 6,
+                    vaccineCompletedDoses: 1,
+                    vaccineLastDate: finalVisitDate,
+                    oxygenDailyHours: med.oxygenDailyHours || 18,
+                    oxygenFlowRate: med.oxygenFlowRate || '2-4 L/min',
+                    selectedWeekDays: med.selectedWeekDays || [],
+                    weeklySingleDose: med.weeklySingleDose || 1,
+                    weeklyTimeSlot: med.weeklyTimeSlot || 'সকাল',
+                    doses,
+                    hasDoseChange: false,
+                    nextDoses: { m: 0, n: 0, nt: 0 },
+                    dailyQty,
+                    currentStock: stockVal,
+                    lastStockUpdated: new Date().toISOString(),
+                    startDate: finalVisitDate,
+                    isContinuous: med.isContinuous || isNonStockMode(fType) || fType === 'cycle',
+                    targetDays: med.targetDays || 30,
+                    note: med.note || '',
+                    lastSeenVisitDate: finalVisitDate,
+                    isArchived: false,
+                    sortOrder: targetProfile.medicines.length
+                });
+                addedCount++;
+            }
+        });
+
+        let archivedCount = 0;
+        const shouldAutoArchive = document.getElementById('autoArchiveMissingChk').checked;
+        if (shouldAutoArchive && finalVisitDate >= overallLatestVisitDate && latestBatchNormKeys.size > 0) {
+            targetProfile.medicines.forEach(m => {
+                if (!m.isArchived) {
+                    const key = normalizeMedKey(m.name);
+                    if (!latestBatchNormKeys.has(key)) {
+                        m.isArchived = true;
+                        archivedCount++;
+                    }
+                }
+            });
+        }
+
+        saveAppData(false);
+        renderProfileSelector();
+        renderVisits();
+        renderMedicines();
+        closeAiScannerModal();
+
+        let summary = `প্রোফাইল "${finalPatientName}" (${finalVisitName})-এ সম্পন্ন হয়েছে!\n• নতুন যুক্ত: ${toBengaliNumeral(addedCount)}টি\n• আপডেট হয়েছে: ${toBengaliNumeral(updatedCount)}টি`;
+        if (archivedCount > 0) {
+            summary += `\n• সর্বশেষ প্রেসক্রিপশনে না থাকায় আর্কাইভে গেছে: ${toBengaliNumeral(archivedCount)}টি`;
+        }
+        alert(summary);
+    }
+
     searchInput.addEventListener('input', renderMedicines);
 
     function escapeHtml(text) {
@@ -1702,6 +3836,7 @@
 
     // Boot
     setInterval(renderMedicines, 60000);
+    renderProfileSelector();
     renderVisits();
     renderMedicines();
     initCloudSync();
